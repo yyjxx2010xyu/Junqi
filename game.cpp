@@ -3,60 +3,69 @@
 #include <cassert>
 #include "game.h"
 
+
+
 /*
-input: 
-	_Board	期盼状态
-	_State	执子方
+input:
+例如: Junqi.exe –-role 1 –-time 60
+	注： 参数role：0表示红方、1表示黑方。
+		参数time：表示单步决策时间，单位秒。
+
+output:
 
 function:
-	生成函数，初始化棋盘和执棋状态
+	设置Game类中的Role和Time_Limit
 */
-Game::Game(Chess _Board, int _State)
+
+void Game::Arg_Init(int argc, char* argv[])
 {
-	Board = _Board;
-	State = _State;
+	Role = int();
+	Time_Limit = int();
 }
+
 
 /*
 input:
 	depth	搜索深度
 
 output: 
-	Move	最优下子
+	Move	最优下子方案
 
 function:
 	进行搜索确定最优下子方案
 */
-Movement Game::Search(int depth)
+Movement Game::Search(Chess Board, int Depth)
 {
-	Movement Move;
+
 	int alpha = -INF;
 	int beta = INF;
-	Search_Returns Ret = _Search(Board, depth, alpha, beta, PlayerType::MaximizingPlayer, State);
-	if (!Ret.Move_His.empty())
-		Move = Ret.Move_His.back();
-	else
-		assert(false);
-	return Move;
+
+	Eval_Move Ret = _Search(Board, Depth, alpha, beta, PlayerType::MaximizingPlayer, State);
+	
+	
+	return Ret.second.back();
 }
+
+
 
 /*
 input:
-	State	执子方
+	Cur_Role	执子方
 
 output:
-	Oppte	交换执子方
+	Opp_Role	交换执子方
 
 function:
 	返回交换执子状态
 */
-static int Oppsite_State(int State)
+
+static int Oppsite_Role(int Cur_Role)
 {
-	int Opp_State = 0;
+	int Opp_Role = 0;
 
 	/* NEED CODE */
 
-	return Opp_State;
+	return Opp_Role;
 }
 
 /*
@@ -66,168 +75,88 @@ input:
 	Alpha		Alpha参数
 	Beta		Beta参数
 	Player		PlayerType MaximizingPlayer/MinimizingPlayer
-	State		执子方
+	Cur_Role		执子方
 
 output:
-	Search_Returns	_Search函数返回值			
+	Eval_Move		_Search函数返回值			
 		Eval		当前估值
 		Move_His	当前最优的移动路径
 
 function:
 	进行mimmax搜索，并使用alpha-beta剪枝，返回最优的下子路径，和最优的解
 */
-Search_Returns Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int State)
+Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_Role)
 {
-	if (Depth == 0 || Is_Over(Cur_Board, State))
+	if (Depth == 0 || Cur_Board.Is_Over(Cur_Role))
 	{
-		return Search_Returns(Evaluate_Chess(Cur_Board), std::vector<Movement>());
+		//	Eval函数始终返回的机器执子方的最优解
+		return std::make_pair(Cur_Board.Evaluate_Chess(this->Role), std::vector<Movement>());
 	}
 
+
+	//	极大化当前Eval的Player
 	if (Player == PlayerType::MaximizingPlayer)
 	{
 		int Max_Eval = -INF;
 		std::vector<Movement> Best_Move;
-		std::vector<Movement> Move = Search_Movement(Cur_Board, State);
+		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role);
+
 		for (std::vector<Movement>::iterator iter = Move.begin(); iter != Move.end(); iter++)
 		{
 			Movement V = *iter;
-			Chess Next_Board = Apply_Move(Cur_Board, V);
-			Search_Returns Ret = _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_State(State));
+			Chess Next_Board = Cur_Board.Apply_Move(V);
+			Eval_Move Ret = _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role));
 			
-			if (Ret.Eval > Max_Eval)
+			int Eval = Ret.first;
+			std::vector<Movement> Move_His = Ret.second;
+
+			if (Eval > Max_Eval)
 			{
-				Max_Eval = Ret.Eval;
-				Best_Move = Ret.Move_His;
+				Max_Eval = Eval;
+				Best_Move = Move_His;
 				Best_Move.push_back(V);
 				
-				Alpha = (Ret.Eval > Alpha) ? Ret.Eval : Alpha;
+				Alpha = (Eval > Alpha) ? Eval : Alpha;
 				if (Beta <= Alpha)
 					break;
 			}
 		}
-		return Search_Returns(Max_Eval, Best_Move);
+		return std::make_pair(Max_Eval, Best_Move);
 	}
+	//	极小化当前Eval的Player
 	if (Player == PlayerType::MinimizingPlayer)
 	{
 		int Min_Eval = INF;
 		std::vector<Movement> Best_Move;
-		std::vector<Movement> Move = Search_Movement(Cur_Board, State);
+		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role);
+		
 		for (std::vector<Movement>::iterator iter = Move.begin(); iter != Move.end(); iter++)
 		{
 			Movement V = *iter;
-			Chess Next_Board = Apply_Move(Cur_Board, V);
-			Search_Returns Ret = _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MaximizingPlayer, Oppsite_State(State));
+			Chess Next_Board = Cur_Board.Apply_Move(V);
+			Eval_Move Ret = _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MaximizingPlayer, Oppsite_Role(Cur_Role));
 			
-			if (Ret.Eval < Min_Eval)
+			int Eval = Ret.first;
+			std::vector<Movement> Move_His = Ret.second;
+
+			if (Eval < Min_Eval)
 			{
-				Min_Eval = Ret.Eval;
-				Best_Move = Ret.Move_His;
+				Min_Eval = Eval;
+				Best_Move = Move_His;
 				Best_Move.push_back(V);
 				
-				Beta = (Ret.Eval < Beta) ? Ret.Eval : Beta;
+				Beta = (Eval < Beta) ? Eval : Beta;
 				if (Beta <= Alpha)
 					break;
 			}
 		}
-		return Search_Returns(Min_Eval, Best_Move);
+		return std::make_pair(Min_Eval, Best_Move);
 	}
 	
 	
 	//	non-existent situation
 	assert(false);
-	return Search_Returns(0, std::vector<Movement>());
+	return std::make_pair(0, std::vector<Movement>());
 }
 
 
-/*
-input:
-	Cur_Board	棋盘数据
-	State	执棋方
-		State == STATE_UPPER	表示执棋方为大写，即上方
-		State == STATE_LOWER	表示执棋方为小写，即下方
-
-output:
-	true/false	当前执棋方无棋可走/有棋可走
-
-function:
-	判断当前执子方是否无棋可走
-*/
-
-bool Game::Is_Over(const Chess& Cur_Board, const int& State)
-{
-	/* NEED CODE */
-	return bool();
-}
-
-/*
-input:
-	Cur_Board	棋盘数据
-
-output:
-	Weight，棋盘权重， 小写的棋子权重减去大写的棋子权重
-	Weight = Weigh_lower - Weight_upper
-	对每个棋子进行赋权，具体可以自行赋值。
-
-function:
-	对棋盘的评估函数
-*/
-int Game::Evaluate_Chess(const Chess& Cur_Board)
-{
-	/* NEED CODE */
-	return 0;
-}
-
-/*
-input:
-	Cur_Board	棋盘数据
-	State	执棋方
-		State == STATE_UPPER	表示执棋方为大写，即上方
-		State == STATE_LOWER	表示执棋方为小写，即下方
-
-output:
-	Move 表示每个可行的Movement，存储在vector中
-
-function:
-	寻找搜索方向，有着充分的想象空间
-*/
-std::vector<Movement> Game::Search_Movement(const Chess& Board, const int& State)
-{
-	std::vector<Movement> Move;
-	Move.clear();
-
-	/* NEED CODE */
-
-	return Move;
-}
-
-/*
-input:
-	Cur_Board	棋盘数据
-	Move		走棋方向
-
-output:
-	Board		更新之后的棋盘
-
-function:
-	通过Move，来更新棋盘
-*/
-
-Chess Game::Apply_Move(const Chess& Cur_Board, const Movement& V)
-{
-	Chess Next_Board;
-
-	/* NEED CODE */
-
-	return Next_Board;
-}
-
-
-/*
-function:
-	可视化棋盘效果，用-+|表示即可，主要用于调试。
-
-*/
-void Chess::Display()
-{
-
-}

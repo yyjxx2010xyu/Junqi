@@ -24,18 +24,18 @@ input: 以下三种情况
 棋局结束，引擎退出。
 
 output：
+Status			是否结束
+	如果结束则Status == STATUS_END
+		否则 Status == STATUS_OK
 Chess Board		返回棋盘数据，记录在Board中
-State			收到init时，State = STATE_UPPER（即后手执棋）
-				收到end时，State = STATE_END
-				其余情况下不进行改动。
 */
-Chess Connect::Get_NCN(int& State)
+int Connect::Get_Board(Chess & Board)
 {
-	Chess Board;
-
+	int Status = STATUS_OK;
+	
 	/* NEED CODE */
-
-	return Board;
+	
+	return Status;
 }
 
 /*
@@ -47,13 +47,13 @@ output:
 	使用标准输入的方式反馈运算结果，此后引擎返回空闲状态亦或是继续运算。
 例如: h2i2
 */
-void Connect::Send_NCN(const Movement& Move)
+void Connect::Send_Move(const Movement& Move)
 {
-	std::string NCN;
+	std::string Str_Move;
 
 	/* NEED CODE */
 
-	std::cout << NCN << std::endl;
+	std::cout << Str_Move << std::endl;
 }
 
 

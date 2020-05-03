@@ -3,33 +3,42 @@
 #include "game.h"
 #include "main.h"
 
-using namespace std;
+/*
+ 例如: Junqi.exe –-role 1 –-time 60
+	注： 参数role：0表示红方、1表示黑方。
+		参数time：表示单步决策时间，单位秒。
 
+*/
 
-int main()
+int main(int argc, char * argv[])
 {
 	Connect Con;
 	Con.Init();
 
 	//	缺省情况下，执先手
-	int State = STATE_LOWER;
+	//	int State = STATE_LOWER;
+	
+
+	//	设定执子方
+	Game Junqi;
+	Junqi.Arg_Init(argc, argv);
 
 	while (true)
 	{
 		Chess Board;
-		Board = Con.Get_NCN(State);
-		if (State == STATE_END)
+		int Status = Con.Get_Board(Board);
+		if (Status == STATUS_END)
 			break;
-		
-		if (0)
-		{
-			Board.Display();
-		}
 
-		Game Cur(Board, State);
-		Movement Move = Cur.Search();
-		Con.Send_NCN(Move);
+		Board.Display();
+
+		Movement Move = Junqi.Search(Board);
+
+		Board = Board.Apply_Move(Move);
+		Board.Display();
+
+		Con.Send_Move(Move);
+
 	}
-
 	return 0;
 }

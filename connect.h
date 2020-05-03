@@ -9,6 +9,6 @@ class Connect
 {
 public:
 	void Init();
-	Chess Get_NCN(int& State);
-	void Send_NCN(const Movement& Move);
+	int Get_Board(Chess &Board);
+	void Send_Move(const Movement& Move);
 };
