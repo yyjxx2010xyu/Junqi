@@ -18,6 +18,8 @@ function:
 bool Chess::Is_Over(const int& Role)
 {
 	/* NEED CODE */
+	//nothing change
+	//just a test
 	return bool();
 }
 
