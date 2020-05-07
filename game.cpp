@@ -3,7 +3,9 @@
 #include <cassert>
 #include "game.h"
 
-
+const int ROLE_UPPER = 1;
+const int ROLE_LOWER = 0;
+const int ROLE_BLANK = -1;
 
 /*
 input:
@@ -40,7 +42,7 @@ Movement Game::Search(Chess Board, int Depth)
 	int alpha = -INF;
 	int beta = INF;
 
-	Eval_Move Ret = _Search(Board, Depth, alpha, beta, PlayerType::MaximizingPlayer, State);
+	Eval_Move Ret = _Search(Board, Depth, alpha, beta, PlayerType::MaximizingPlayer, Role);
 	
 	
 	return Ret.second.back();

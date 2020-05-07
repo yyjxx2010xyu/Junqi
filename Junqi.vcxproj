@@ -124,12 +124,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="chess.cpp" />
+    <ClCompile Include="cmd_console_tools.cpp" />
     <ClCompile Include="connect.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="chess.h" />
+    <ClInclude Include="cmd_console_tools.h" />
     <ClInclude Include="connect.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="main.h" />
