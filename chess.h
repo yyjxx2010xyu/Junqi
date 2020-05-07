@@ -28,6 +28,7 @@ class Chess
 {
 private:
 	std::vector<std::vector<char> >  Board;
+	int Rank_Judgement(char a, char b);
 public:
 	Chess()
 	{
