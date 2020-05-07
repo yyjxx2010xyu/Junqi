@@ -120,7 +120,7 @@ Chess Chess::Apply_Move(const Movement& V)
 		Next_Board.Board[V.To.x][V.To.y] = blank;
 		Next_Board.Board[V.From.x][V.From.y] = blank;
 	}
-	else if (result = ABOVE) {
+	else if (result == ABOVE) {
 		Next_Board.Board[V.From.x][V.From.y] = blank;
 	}
 	else {
@@ -179,8 +179,8 @@ std::vector<Movement> Chess::Search_Movement(const int& Role)
 	//	2. 遍历整个Board搜寻进攻型策略
 	PieceBoard pb(Board);
 	Movement New_Move;
-	for (int i = 0; i < Board.size(); i++) {
-		for (int j = 0; j < Board[i].size(); j++) {
+	for (unsigned i = 0; i < Board.size(); i++) {
+		for (unsigned j = 0; j < Board[i].size(); j++) {
 			PieceCeil ceil = pb.getCeil(i, j);
 			//	获取这个格子四路最近的可访问的格子
 			std::vector<PieceCeil> v1 = pb.get4NearestCeil(ceil);
