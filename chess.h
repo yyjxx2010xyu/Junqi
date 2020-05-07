@@ -8,12 +8,12 @@
 //	棋盘的大小
 static const int Chess_H = 13;
 static const int Chess_W = 5;
-const char blank = ' ';
-const char RANK[10] = "AJSVTYLPG";//吃子排序
 
-#define SAME_RANK 0
-#define ABOVE 1
-#define UNDER -1
+class Movement;
+class Coord;
+extern const int ROLE_BLANK;
+extern const int ROLE_LOWER;
+extern const int ROLE_UPPER;
 
 class Movement;
 class Coord;
@@ -28,7 +28,6 @@ class Chess
 {
 private:
 	std::vector<std::vector<char> >  Board;
-	int Rank_Judgement(char a, char b);
 public:
 	Chess()
 	{
