@@ -53,7 +53,6 @@ public:
 };
 
 
-
 //	inline 函数
 
 const int frontEndPos = 7;	//	前线位置
@@ -143,7 +142,7 @@ private:
 	chessClass id;
 	int role;
 public:
-	Piece(chessClass id = chessClass::none, int role = ROLE_BLANK) :id(id), role(role) {}
+	Piece(chessClass id = chessClass::none, int role = ROLE_BLANK) :id(id),role(role)  {}
 	Piece(const char ch);						//	need implementation
 	chessClass getId() const { return this->id; }
 	int getRole() const { return this->role; }
@@ -161,7 +160,7 @@ private:
 	Piece p;
 	int x, y;	//	行, 列
 public:
-	PieceCeil(Piece piece = chessClass::none, int x = 0, int y = 0) :p(piece), x(x), y(y) {}
+	PieceCeil(Piece piece = chessClass::none, int x = 0, int y = 0):p(piece),x(x),y(y) {}
 	int getX() { return this->x; }
 	int getY() { return this->y; }
 	Piece getPiece() { return this->p; }
