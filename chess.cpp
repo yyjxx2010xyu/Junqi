@@ -49,12 +49,32 @@ int Chess::Rank_Judgement(char a, char b)
 		return UNDER;
 }
 
+bool Chess::Is_movable(int x, int y)
+{
+	//未完成，还在想
+	return true;
+}
+
 bool Chess::Is_Over(const int& Role)
 {
 	/* NEED CODE */
 	//只考虑了双方大本营内的军旗有没有被吃
 	if((Board[0][1]=='F'||Board[0][3]=='F')&&(Board[12][1]=='f'||Board[12][3]=='f'))
 		return false;
+	//找到棋盘内可移动的棋子
+	char ch0 = 'A';
+	char ch1 = 'Z';
+	if (Role == ROLE_LOWER) {
+		ch0 = 'a';
+		ch1 = 'z';
+	}
+	for (int i = 0; i < Chess_H; i++) {
+		for (int j = 0; j < Chess_W; j++) {
+			if (Board[i][j] >= ch0 && Board[i][j] <= ch1)
+				if (Is_movable(i, j))
+					return false;
+		}
+	}
 	return true;
 }
 

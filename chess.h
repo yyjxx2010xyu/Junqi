@@ -15,11 +15,13 @@ extern const int ROLE_BLANK;
 extern const int ROLE_LOWER;
 extern const int ROLE_UPPER;
 
-class Movement;
-class Coord;
-extern const int ROLE_BLANK;
-extern const int ROLE_LOWER;
-extern const int ROLE_UPPER;
+//等级判断需要
+const char RANK[11] = "AJSVTYLPGF";
+const char blank = ' ';
+#define UNDER -1
+#define ABOVE 1
+#define SAME_RANK 0
+
 
 /*
 存储方式就与Word中一样，上面用大写，下面用小写。
@@ -29,6 +31,7 @@ class Chess
 private:
 	std::vector<std::vector<char> >  Board;
 	int Rank_Judgement(char a, char b);
+	bool Is_movable(int x,int y);
 public:
 	Chess()
 	{
@@ -186,5 +189,5 @@ public:
 };
 
 const int Direction[][2] = { {1,0},{0,1},{-1,0},{0,-1} };
-const int FullDirection[][2] = { {1,0},{0,1},{-1,0},{0,-1},{1,1,},{1,-1},{-1,1},{-1,-1} };
+const int FullDirection[][2] = { {1,0},{0,1},{-1,0},{0,-1},{1,1},{1,-1},{-1,1},{-1,-1} };
 //	const Coord p = { 0,0 };
