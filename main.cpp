@@ -10,14 +10,15 @@
 
 */
 
-int main(int argc, char * argv[])
+#if 0
+int main(int argc, char* argv[])
 {
 	Connect Con;
 	Con.Init();
 
 	//	缺省情况下，执先手
 	//	int State = STATE_LOWER;
-	
+
 
 	//	设定执子方
 	Game Junqi;
@@ -40,5 +41,17 @@ int main(int argc, char * argv[])
 		Con.Send_Move(Move);
 
 	}
+	return 0;
+}
+#endif
+
+int main() {
+	std::vector<std::vector<char> >  Board = { {'p','p','d','f','d'}, {'p','l','l','d','z'}, {'z','1','g','1','y'}, {'y','t','1','t','y'},
+		{'s','1','g','1','s'}, {'j','v','g','v','a'},{'5'},{'J','V','G','V','A'},{'S','1','G','1','S'},{'Y','T','1','T','Y'},{ 'Z','1','G','1','Y'}, {'P','L','L','D','Z'},{'P','P','D','F','D'} };
+	Chess cb(Board);
+	//	cb.Display();
+	std::vector<Movement> m = cb.Search_Movement(ROLE_UPPER);
+	for (std::vector<Movement>::iterator iter = m.begin(); iter != m.end(); iter++)
+		std::cout << (*iter).From.x << (*iter).From.y << ' ' << (*iter).To.x << (*iter).To.y << std::endl;
 	return 0;
 }

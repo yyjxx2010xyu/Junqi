@@ -16,9 +16,12 @@ Role	执棋方
 	Role == Role_UPPER	表示执棋方为大写，即上方
 	Role == Role_LOWER	表示执棋方为小写，即下方
 */
-const int ROLE_UPPER = 1;
-const int ROLE_LOWER = 0;
-
+//	const int ROLE_UPPER = 1;
+//	const int ROLE_LOWER = 0;
+//	const int ROLE_BLANK = -1;
+extern const int ROLE_UPPER;
+extern const int ROLE_LOWER;
+extern const int ROLE_BLANK;
 
 
 //	用于初始化的最大值
@@ -61,6 +64,8 @@ Role	执棋方
 Time_Limit	时间限制
 	目前还没加以限制。
 */
+
+class Chess;
 
 class Game
 {
