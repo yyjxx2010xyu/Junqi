@@ -33,7 +33,30 @@ int Connect::Get_Board(Chess & Board)
 {
 	int Status = STATUS_OK;
 	
-	/* NEED CODE */
+	char ch;
+	int i = 0, j = 0;
+	while (std::cin >> ch)
+	{
+		if (ch == 'i')
+			for (int i = 0; i <= 3; i++)
+				std::cin >> ch;
+		else if (ch == 'e')
+			return STATUS_END;
+		else if (ch == '/')
+			i++;
+		else if (ch <= 53 && ch >= 49)
+			for (int i = 48; i < (int)ch; i++)
+			{
+				Board[i][j] = '*';
+				j++;
+			}
+		else
+		{
+			Board[i][j] = ch;
+			j++;
+		}
+
+	}
 	
 	return Status;
 }
@@ -51,7 +74,12 @@ void Connect::Send_Move(const Movement& Move)
 {
 	std::string Str_Move;
 
-	/* NEED CODE */
+	std::string s1, s2, s3, s4;
+	s1 = 'a' + 13 - Move.From.x;
+	s2 = '0' + Move.From.y;
+	s3 = 'a' + 13 - Move.To.x;
+	s4 = '0' + Move.To.y;
+	Str_Move = s1 + s2 + s3 + s4;
 
 	std::cout << Str_Move << std::endl;
 }
