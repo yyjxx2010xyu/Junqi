@@ -19,7 +19,7 @@ extern const int ROLE_LOWER;
 extern const int ROLE_UPPER;
 
 //等级判断需要
-const char RANK[] = "AJSZVTYLPGF";
+const char RANK[] = "AJSVTYLPGF";
 const char BLANK = ' ';
 
 #define UNDER -1
