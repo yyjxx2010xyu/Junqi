@@ -52,7 +52,6 @@ int Chess::Rank_Judgement(char a, char b)
 
 bool Chess::Is_Over(const int& Role)
 {
-	/* NEED CODE */
 	//只考虑了双方大本营内的军旗有没有被吃
 	if ((Board[0][1] == 'F' || Board[0][3] == 'F') && (Board[12][1] == 'f' || Board[12][3] == 'f'))
 		return false;
@@ -217,34 +216,6 @@ static bool Has_Chess(char ch)
 	return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
 }
 
-
-//	比大小
-static bool Is_Greater(char From, char To)
-{
-	if (chessMap.at(From) == chessClass::gongbing && chessMap.at(From) == chessClass::dilei)
-		return true;
-	//	const char RANK[11] = "AJSVTYLPGF";
-
-
-	if (From >= 'a' && From <= 'z')
-		From = From - 'a' + 'A';
-
-	if (To >= 'a' && To <= 'z')
-		To = To - 'a' + 'A';
-
-	std::cout << From << " " << To << std::endl;
-	int a_order;
-	int b_order;
-	for (int i = 0; i < strlen(RANK); i++) {
-		if (From == RANK[i])
-			a_order = i;
-		if (To == RANK[i])
-			b_order = i;
-	}
-	if (a_order <= b_order)
-		return true;
-	return false;
-}
 bool Chess::Is_Movable(Movement M)
 {
 	char From = Board[M.From.x][M.From.y];
@@ -259,13 +230,12 @@ bool Chess::Is_Movable(Movement M)
 		return false;
 
 	//	对方的棋子大
-	if (!Is_Greater(From, To))
+	if (Rank_Judgement(From, To) == UNDER)
 		return false;
 
 	//	方向是行营且有棋子
 	if (Is_Station(M.To.x, M.To.y) && Has_Chess(To))
 		return false;
-
 	return true;
 }
 
