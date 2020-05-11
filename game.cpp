@@ -21,8 +21,8 @@ function:
 
 void Game::Arg_Init(int argc, char* argv[])
 {
-	Role = int();
-	Time_Limit = int();
+	Role = atoi(argv[2]);
+	Time_Limit = atoi(argv[4]);
 }
 
 
@@ -30,7 +30,7 @@ void Game::Arg_Init(int argc, char* argv[])
 input:
 	depth	搜索深度
 
-output: 
+output:
 	Move	最优下子方案
 
 function:
@@ -43,8 +43,8 @@ Movement Game::Search(Chess Board, int Depth)
 	int beta = INF;
 
 	Eval_Move Ret = _Search(Board, Depth, alpha, beta, PlayerType::MaximizingPlayer, Role);
-	
-	
+
+
 	return Ret.second.back();
 }
 
@@ -65,7 +65,8 @@ static int Oppsite_Role(int Cur_Role)
 {
 	int Opp_Role = 0;
 
-	/* NEED CODE */
+	if (!Cur_Role)
+		Opp_Role = 1;
 
 	return Opp_Role;
 }
@@ -80,7 +81,7 @@ input:
 	Cur_Role		执子方
 
 output:
-	Eval_Move		_Search函数返回值			
+	Eval_Move		_Search函数返回值
 		Eval		当前估值
 		Move_His	当前最优的移动路径
 
@@ -96,6 +97,7 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 	}
 
 
+	std::cout << "Depth" << Depth << "Alpha" << Alpha << "Beta" << Beta << std::endl;
 	//	极大化当前Eval的Player
 	if (Player == PlayerType::MaximizingPlayer)
 	{
@@ -108,7 +110,7 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 			Movement V = *iter;
 			Chess Next_Board = Cur_Board.Apply_Move(V);
 			Eval_Move Ret = _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role));
-			
+
 			int Eval = Ret.first;
 			std::vector<Movement> Move_His = Ret.second;
 
@@ -117,7 +119,7 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 				Max_Eval = Eval;
 				Best_Move = Move_His;
 				Best_Move.push_back(V);
-				
+
 				Alpha = (Eval > Alpha) ? Eval : Alpha;
 				if (Beta <= Alpha)
 					break;
@@ -131,13 +133,13 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 		int Min_Eval = INF;
 		std::vector<Movement> Best_Move;
 		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role);
-		
+
 		for (std::vector<Movement>::iterator iter = Move.begin(); iter != Move.end(); iter++)
 		{
 			Movement V = *iter;
 			Chess Next_Board = Cur_Board.Apply_Move(V);
 			Eval_Move Ret = _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MaximizingPlayer, Oppsite_Role(Cur_Role));
-			
+
 			int Eval = Ret.first;
 			std::vector<Movement> Move_His = Ret.second;
 
@@ -146,7 +148,7 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 				Min_Eval = Eval;
 				Best_Move = Move_His;
 				Best_Move.push_back(V);
-				
+
 				Beta = (Eval < Beta) ? Eval : Beta;
 				if (Beta <= Alpha)
 					break;
@@ -154,8 +156,8 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 		}
 		return std::make_pair(Min_Eval, Best_Move);
 	}
-	
-	
+
+
 	//	non-existent situation
 	assert(false);
 	return std::make_pair(0, std::vector<Movement>());

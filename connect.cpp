@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "connect.h"
-
+#include "chess.h"
 
 /*
 (1)	ready
@@ -29,55 +29,66 @@ Status			是否结束
 		否则 Status == STATUS_OK
 Chess Board		返回棋盘数据，记录在Board中
 */
-int Connect::Get_Board(Chess & Board)
+int Connect::Get_Board(Chess& Board)
 {
-	int Status = STATUS_OK;
-	
-	char ch;
-	int i = 0, j = 0;
-	while (std::cin >> ch)
+	std::string Str;
+	std::cin >> Str;
+	if (Str == "end")
+		return STATUS_END;
+	if (Str == "init")
+		std::cin >> Str;
+	int x = 0, y = 0;
+	for (int i = 0; i < Str.length(); i++)
 	{
-		if (ch == 'i')
-			for (int i = 0; i <= 3; i++)
-				std::cin >> ch;
-		else if (ch == 'e')
-			return STATUS_END;
-		else if (ch == '/')
-			i++;
-		else if (ch <= 53 && ch >= 49)
-			for (int i = 48; i < (int)ch; i++)
-			{
-				Board[i][j] = '*';
-				j++;
-			}
-		else
+		if (Str[i] == '/')
+			continue;
+		if ((Str[i] >= 'A' && Str[i] <= 'Z') || (Str[i] >= 'a' && Str[i] <= 'z'))
 		{
-			Board[i][j] = ch;
-			j++;
+			Board.Set_Board(x, y, Str[i]);
+			y++;
+			if (y == Chess_W)
+			{
+				x++;
+				y = 0;
+			}
 		}
 
+		if (Str[i] >= '0' && Str[i] <= '9')
+		{
+			for (int j = 1; j <= Str[i] - '0'; j++)
+			{
+				Board.Set_Board(x, y, BLANK);
+				y++;
+				if (y == Chess_W)
+				{
+					x++;
+					y = 0;
+				}
+			}
+		}
 	}
-	
-	return Status;
+	int Value1, Value2;
+	std::cin >> Value1 >> Value2;
+	return STATUS_OK;
 }
 
 /*
 input:	Move结构体
 		Move.From	表示起始坐标 都是用数字表示
 		Move.To		表示终点坐标 都是用数字表示
-output: 
+output:
 (4)	<落子决策>
 	使用标准输入的方式反馈运算结果，此后引擎返回空闲状态亦或是继续运算。
 例如: h2i2
 */
-void Connect::Send_Move(const Movement& Move)
+void Connect::Send_Move(Movement Move)
 {
 	std::string Str_Move;
 
 	std::string s1, s2, s3, s4;
-	s1 = 'a' + 13 - Move.From.x;
+	s1 = 'a' + 13 - Move.From.x - 1;
 	s2 = '0' + Move.From.y;
-	s3 = 'a' + 13 - Move.To.x;
+	s3 = 'a' + 13 - Move.To.x - 1;
 	s4 = '0' + Move.To.y;
 	Str_Move = s1 + s2 + s3 + s4;
 

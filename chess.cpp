@@ -18,15 +18,15 @@ function:
 int Chess::Rank_Judgement(char a, char b)
 {
 	//新位置为空
-	if (a == blank)
+	if (a == BLANK)
 		return UNDER;
-	if (b == blank)
+	if (b == BLANK)
 		return ABOVE;
 	if (a >= 'a' && a <= 'z')
 		a = a - 'a' + 'A';
 	if (b >= 'a' && b <= 'z')
 		b = b - 'a' + 'A';
-	if (a == 'Z' || b == 'Z'||a == b)//特殊：炸弹
+	if (a == 'Z' || b == 'Z' || a == b)//特殊：炸弹
 		return SAME_RANK;
 	if (a != 'G' && b == 'D' || a == 'D' && b != 'G')//特殊：地雷
 		return SAME_RANK;
@@ -37,7 +37,7 @@ int Chess::Rank_Judgement(char a, char b)
 	//以下为等级顺序
 	int a_order;
 	int b_order;
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < strlen(RANK); i++) {
 		if (a == RANK[i])
 			a_order = i;
 		if (b == RANK[i])
@@ -49,17 +49,12 @@ int Chess::Rank_Judgement(char a, char b)
 		return UNDER;
 }
 
-bool Chess::Is_movable(int x, int y)
-{
-	//未完成，还在想
-	return true;
-}
 
 bool Chess::Is_Over(const int& Role)
 {
 	/* NEED CODE */
 	//只考虑了双方大本营内的军旗有没有被吃
-	if((Board[0][1]=='F'||Board[0][3]=='F')&&(Board[12][1]=='f'||Board[12][3]=='f'))
+	if ((Board[0][1] == 'F' || Board[0][3] == 'F') && (Board[12][1] == 'f' || Board[12][3] == 'f'))
 		return false;
 	//找到棋盘内可移动的棋子
 	char ch0 = 'A';
@@ -71,8 +66,13 @@ bool Chess::Is_Over(const int& Role)
 	for (int i = 0; i < Chess_H; i++) {
 		for (int j = 0; j < Chess_W; j++) {
 			if (Board[i][j] >= ch0 && Board[i][j] <= ch1)
-				if (Is_movable(i, j))
-					return false;
+			{
+				if (chessMap.at(Board[i][j]) == chessClass::dilei)
+					continue;
+				if (chessMap.at(Board[i][j]) == chessClass::junqi)
+					continue;
+				return false;
+			}
 		}
 	}
 	return true;
@@ -137,17 +137,16 @@ Chess Chess::Apply_Move(const Movement& V)
 	}
 	int result = Rank_Judgement(Next_Board.Board[V.To.x][V.To.y], Next_Board.Board[V.From.x][V.From.y]);
 	if (result == SAME_RANK) {
-		Next_Board.Board[V.To.x][V.To.y] = blank;
-		Next_Board.Board[V.From.x][V.From.y] = blank;
+		Next_Board.Board[V.To.x][V.To.y] = BLANK;
+		Next_Board.Board[V.From.x][V.From.y] = BLANK;
 	}
 	else if (result == ABOVE) {
-		Next_Board.Board[V.From.x][V.From.y] = blank;
+		Next_Board.Board[V.From.x][V.From.y] = BLANK;
 	}
 	else {
 		Next_Board.Board[V.To.x][V.To.y] = Next_Board.Board[V.From.x][V.From.y];
-		Next_Board.Board[V.From.x][V.From.y] = blank;
+		Next_Board.Board[V.From.x][V.From.y] = BLANK;
 	}
-	/* NEED CODE */
 
 	return Next_Board;
 }
@@ -166,7 +165,7 @@ void Chess::Display()
 	cls();
 	//	2. 设置界面大小
 	setconsoleborder(130, 40);
-	TransChessBoard(Board);
+
 	//	3. 画界面和棋子
 	common_draw_background(board, true, true, true, { 0,0 });
 	Display_Chess(Board, board, true, true);
@@ -175,6 +174,105 @@ void Chess::Display()
 	std::cout << std::endl << std::endl;
 }
 
+
+//	该棋子为执棋方
+static bool Is_Role_Chess(char ch, int Role)
+{
+	if (Role == ROLE_UPPER && ch >= 'A' && ch <= 'Z')
+		return true;
+	if (Role == ROLE_LOWER && ch >= 'a' && ch <= 'z')
+		return true;
+	return false;
+}
+
+
+//	该棋子为工兵
+static bool Is_GongBing(char ch)
+{
+	return (ch == 'g') || (ch == 'G');
+}
+
+//	合法位置
+static bool Is_Valid(int x, int y)
+{
+	return x >= 0 && x < Chess_H&& y >= 0 && y < Chess_W;
+}
+
+
+//	在铁路上
+static bool Is_Railway(int x, int y)
+{
+	return Railway[x][y];
+}
+
+//	在行营中
+static bool Is_Station(int x, int y)
+{
+	return Station[x][y];
+}
+
+//	有棋子
+static bool Has_Chess(char ch)
+{
+	return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
+}
+
+
+//	比大小
+static bool Is_Greater(char From, char To)
+{
+	if (chessMap.at(From) == chessClass::gongbing && chessMap.at(From) == chessClass::dilei)
+		return true;
+	//	const char RANK[11] = "AJSVTYLPGF";
+
+
+	if (From >= 'a' && From <= 'z')
+		From = From - 'a' + 'A';
+
+	if (To >= 'a' && To <= 'z')
+		To = To - 'a' + 'A';
+
+	std::cout << From << " " << To << std::endl;
+	int a_order;
+	int b_order;
+	for (int i = 0; i < strlen(RANK); i++) {
+		if (From == RANK[i])
+			a_order = i;
+		if (To == RANK[i])
+			b_order = i;
+	}
+	if (a_order <= b_order)
+		return true;
+	return false;
+}
+bool Chess::Is_Movable(Movement M)
+{
+	char From = Board[M.From.x][M.From.y];
+	char To = Board[M.To.x][M.To.y];
+	//	强制要求吃子
+	if (To == BLANK)
+		return false;
+
+	if (chessMap.at(From) == chessClass::dilei)
+		return false;
+	if (chessMap.at(From) == chessClass::junqi)
+		return false;
+
+	//	对方的棋子大
+	if (!Is_Greater(From, To))
+		return false;
+
+	//	方向是行营且有棋子
+	if (Is_Station(M.To.x, M.To.y) && Has_Chess(To))
+		return false;
+
+	return true;
+}
+
+void Chess::Set_Board(int x, int y, int ch)
+{
+	Board[x][y] = ch;
+}
 
 /*
 input:
@@ -193,55 +291,76 @@ std::vector<Movement> Chess::Search_Movement(const int& Role)
 	std::vector<Movement> Move;
 	Move.clear();
 
-	//	1. 将数字转换成'*'(placeholder)
-	TransChessBoard(Board);
+	for (int i = 0; i < Chess_H; i++)
+		for (int j = 0; j < Chess_W; j++)
+			if (Is_Role_Chess(Board[i][j], Role))
+			{
+				if (Is_GongBing(Board[i][j]))
+					continue;
+				//	std::vector<Coord> v2 = Railway(ceil);
+				//	v1.insert(v1.end(), v2.begin(), v2.end());
 
-	//	2. 遍历整个Board搜寻进攻型策略
-	PieceBoard pb(Board);
-	Movement New_Move;
-	for (unsigned i = 0; i < Board.size(); i++) {
-		for (unsigned j = 0; j < Board[i].size(); j++) {
-			PieceCeil ceil = pb.getCeil(i, j);
-			//	获取这个格子四路最近的可访问的格子
-			std::vector<PieceCeil> v1 = pb.get4NearestCeil(ceil);
-			//	特别分析工兵的情况
-			if (pb.getCeil(i, j).getPiece().getId() == chessClass::gongbing) {
-				std::vector<PieceCeil> v2 = pb.getBFSCeil(ceil);
-				v1.insert(v1.end(), v2.begin(), v2.end());
-			}
-			for (std::vector<PieceCeil>::iterator iter = v1.begin(); iter != v1.end(); iter++) {
-				AttackResult attackrslt = ceil.getPiece().attack((*iter).getPiece());
-				//	如果攻击对象不在行营里，且攻击结果至少是同归于尽；那么加入vector中
-				if (Field[(*iter).getX()][(*iter).getY()] != (int)BoardClass::station && (attackrslt == AttackResult::Bigger || attackrslt == AttackResult::Equal)) {
-					New_Move.From = { ceil.getX(),ceil.getY() };
-					New_Move.To = { (*iter).getX(), (*iter).getY() };
-					Move.push_back(New_Move);
+
+					//	上下左右方向，铁路上自动扩展
+				for (int k = 0; k < 4; k++)
+				{
+					int cur_x = i, cur_y = j;
+
+					while (true)
+					{
+						cur_x += HV_DirectX[k];
+						cur_y += HV_DirectY[k];
+						//	判断坐标合法性
+						if (!Is_Valid(cur_x, cur_y))
+							break;
+						//	如果不在铁轨上，或者脱离铁轨那么就直接退出
+						if (!(Is_Railway(cur_x, cur_y) && Is_Railway(i, j)))
+							break;
+						//	如果碰到棋子了
+						if (Has_Chess(Board[cur_x][cur_y]))
+							break;
+
+					}
+
+					if (!Is_Valid(cur_x, cur_y))
+						continue;
+					if (!Has_Chess(Board[cur_x][cur_y]))
+						continue;
+					if (Is_Role_Chess(Board[cur_x][cur_y], Role))
+						continue;
+					//	如果起始位置在铁轨上，结束位置不在铁轨上，则不合法
+					if (!Is_Railway(cur_x, cur_y) && Is_Railway(i, j))
+						continue;
+
+					Movement M = Movement(Coord(i, j), Coord(cur_x, cur_y));
+					if (!Is_Movable(M))
+						continue;
+					Move.push_back(M);
+				}
+
+				// 斜向方向只能为1
+				for (int k = 0; k < 4; k++)
+				{
+					int cur_x = i + Cross_DirectX[k];
+					int cur_y = j + Cross_DirectY[k];
+					if (!(Is_Station(i, j) || Is_Station(cur_x, cur_y)))
+						continue;
+					if (!Is_Valid(cur_x, cur_y))
+						continue;
+					Movement M = Movement(Coord(i, j), Coord(cur_x, cur_y));
+					if (!Is_Movable(M))
+						continue;
+					Move.push_back(M);
+
 				}
 			}
-		}
-	}
 
 	return Move;
 }
 
 
 
-/*	inline 函数  */
 
-//	将对应的数字转换成其他占位符（'*'）
-inline void TransChessBoard(std::vector<std::vector<char> >& BoardData) {
-	for (std::vector<std::vector<char>>::iterator iter = BoardData.begin(); iter != BoardData.end(); iter++) {
-		for (std::vector<char>::iterator it = (*iter).begin(); it != (*iter).end();) {
-			if (*it >= '0' && *it <= '9') {
-				int item = *it - '0';
-				it = (*iter).erase(it);
-				it = (*iter).insert(it, item, placeholder);
-			}
-			else
-				it++;
-		}
-	}
-}
 
 //	返回棋盘相应位置的颜色
 inline int isColor(int linePos) {
@@ -314,167 +433,5 @@ inline void Display_Chess(std::vector<std::vector<char> >  Board, class Coord si
 		}
 		std::cout << std::endl;
 	}
-}
-
-
-/*	Piece Implementation  */
-
-Piece::Piece(const char ch) {
-	chessClass myId = chessClass::none;
-	for (std::vector<std::pair<char, chessClass>>::const_iterator iter = chessPiece.begin(); iter < chessPiece.end(); iter++) {
-		if ((*iter).first == ch) {
-			myId = (*iter).second;
-			break;
-		}
-	}
-	this->id = myId;
-	this->role = (ch >= 'a' && ch <= 'z') ? ROLE_LOWER : (ch >= 'A' && ch <= 'Z' ? ROLE_UPPER : ROLE_BLANK);
-}
-
-char Piece::getchessClass() const {
-	char target = placeholder;
-	for (std::vector<std::pair<char, chessClass>>::const_iterator iter = chessPiece.begin(); iter < chessPiece.end(); iter++) {
-		if ((*iter).second == this->id) {	//	(*iter).first 一定是小写的，因为数组定义的问题；要改的话加一句话
-			target = this->role == ROLE_LOWER ? (*iter).first : (this->role == ROLE_UPPER ? (*iter).first + 'A' - 'a' : placeholder);
-			break;
-		}
-	}
-	return target;
-}
-
-AttackResult Piece::attack(const Piece& target) {
-	chessClass p = this->getId();
-	chessClass t = target.getId();
-	if (p == chessClass::dilei || p == chessClass::junqi)
-		return AttackResult::None;
-	else if (p == chessClass::zhadan || t == chessClass::zhadan)
-		return AttackResult::Equal;
-	else if (p != chessClass::gongbing && t == chessClass::dilei)
-		return AttackResult::Equal;
-	else if (p == chessClass::gongbing && t == chessClass::dilei)
-		return AttackResult::Bigger;
-	else if (p > t)
-		return AttackResult::Bigger;
-	else if (p == t)
-		return AttackResult::Equal;
-	else //	if (p < t)
-		return AttackResult::Smaller;
-}
-
-/*	PieceCeil Implementation  */
-
-ConnWay PieceCeil::isConnPieceCeil(PieceCeil& ceil) {
-	if (!this->isValidCeil() || !ceil.isValidCeil())	//	下标超出棋盘
-		return ConnWay::none;
-	if (Field[this->x][this->y] == (int)BoardClass::empty || Field[ceil.x][ceil.y] == (int)BoardClass::empty)	//	山界位置
-		return ConnWay::none;
-	if (this->x == ceil.x && this->y == ceil.y)			//	同一个格点
-		return ConnWay::none;
-	if (abs(this->x - ceil.x) > 1 || abs(this->y - ceil.y) > 1)	//	非相邻位置（8个方向）
-		return ConnWay::none;
-	if (Railway[this->x][this->y] == 1 && Railway[ceil.x][ceil.y] == 1)	//	铁路线路连接
-		return ConnWay::Railway;
-	else if (Field[this->x][this->y] == (int)BoardClass::station || Field[ceil.x][ceil.y] == (int)BoardClass::station)
-		return ConnWay::Highway;
-	else if ((abs(this->x - ceil.x) == 1 && abs(this->y - ceil.y) == 0)		//	两个站点都是非行营，且无铁路连接
-		|| (abs(this->x - ceil.x) == 0 && abs(this->y - ceil.y) == 1))
-		return ConnWay::Highway;
-	else
-		return ConnWay::none;
-}
-
-/*	PieceBoard Implementation  */
-
-std::vector<PieceCeil> PieceBoard::get4NearestCeil(PieceCeil cur) {
-	std::vector<PieceCeil> nearestCeil;
-
-	//	铁路联结点
-	if (Railway[cur.getX()][cur.getY()] == 1) {
-		int cur_x = cur.getX(), cur_y = cur.getY(), j = 0;
-		for (int i = 0; i < sizeof(Direction) / sizeof(Coord); i++) {
-			PieceCeil next = this->pieceboard[cur_x + Direction[i][0]][cur_y + Direction[i][1]];
-			PieceCeil searchCeil = next;
-			j = 1;
-			while (cur.isConnPieceCeil(searchCeil) == ConnWay::Railway) {
-				if (!cur.isValidCeil() || !searchCeil.isValidCeil())
-					break;
-				if (searchCeil.getPiece().getId() != chessClass::none)
-					break;
-				j++;
-				searchCeil = this->pieceboard[cur_x + j * Direction[i][0]][cur_y + j * Direction[i][1]];
-			}
-			if (cur.isConnPieceCeil(next) == ConnWay::Railway && !searchCeil.isSameRolePiece(cur))
-				nearestCeil.push_back(searchCeil);
-		}
-	}
-
-	//	公路联结点
-	for (int i = 0; i < sizeof(FullDirection) / sizeof(Coord); i++) {
-		int cur_x = cur.getX(), cur_y = cur.getY();
-		PieceCeil next = this->pieceboard[cur_x + FullDirection[i][0]][cur_y + FullDirection[i][1]];
-		if (cur.isConnPieceCeil(next) == ConnWay::Highway && next.getPiece().getId() != chessClass::none)
-			nearestCeil.push_back(next);
-	}
-
-	return nearestCeil;
-}
-
-
-std::vector<PieceCeil> PieceBoard::getBFSCeil(PieceCeil cur) {
-	std::vector<PieceCeil> BFSCeil;
-	if (cur.getPiece().getId() != chessClass::gongbing)
-		return BFSCeil;
-
-	//	BFS搜索铁路联结
-	std::queue<PieceCeil> q;
-	q.push(cur);
-	while (!q.empty()) {
-		PieceCeil ceil = q.front();
-		q.pop();
-		for (int i = 0; i < sizeof(Direction) / sizeof(Coord); i++) {
-			int cur_x = ceil.getX(), cur_y = ceil.getY();
-			PieceCeil next = this->getCeil(cur_x + Direction[i][0], cur_y + Direction[i][1]);
-			if (!next.isValidCeil())
-				continue;
-			if (ceil.isConnPieceCeil(next) == ConnWay::Railway && next.getPiece().getId() == chessClass::none)
-				q.push(next);
-			if (ceil.isConnPieceCeil(next) == ConnWay::Railway && next.getPiece().getId() != chessClass::none)
-				BFSCeil.push_back(next);
-		}
-	}
-
-	//	公路联结
-	for (int i = 0; i < sizeof(FullDirection) / sizeof(Coord); i++) {
-		int cur_x = cur.getX(), cur_y = cur.getY();
-		PieceCeil next = this->pieceboard[cur_x + FullDirection[i][0]][cur_y + FullDirection[i][1]];
-		if (cur.isConnPieceCeil(next) == ConnWay::Highway && next.getPiece().getId() != chessClass::none)
-			BFSCeil.push_back(next);
-	}
-
-	return BFSCeil;
-}
-
-/*	Testcase  */
-void test(std::vector<std::vector<char> >  Board) {
-	PieceBoard pb(Board);
-	if (0) {
-		for (unsigned i = 0; i < Board.size(); i++) {
-			for (unsigned j = 0; j < Board[i].size(); j++) {
-				std::cout << pb.getCeil(i, j) << ' ';
-			}
-			std::cout << std::endl;
-		}
-	}
-	if (0) {
-		std::cout << (int)pb.getCeil(0, 1).isConnPieceCeil(pb.getCeil(0, 2)) << std::endl;	//	Highway
-		std::cout << (int)pb.getCeil(0, 1).isConnPieceCeil(pb.getCeil(1, 1)) << std::endl;	//	Highway
-		std::cout << (int)pb.getCeil(0, 0).isConnPieceCeil(pb.getCeil(1, 0)) << std::endl;	//	Highway
-		std::cout << (int)pb.getCeil(1, 0).isConnPieceCeil(pb.getCeil(2, 1)) << std::endl;	//	Highway
-		std::cout << (int)pb.getCeil(2, 0).isConnPieceCeil(pb.getCeil(2, 1)) << std::endl;	//	Highway
-		std::cout << (int)pb.getCeil(1, 0).isConnPieceCeil(pb.getCeil(2, 0)) << std::endl;	//	Railway
-		std::cout << (int)pb.getCeil(2, 1).isConnPieceCeil(pb.getCeil(3, 1)) << std::endl;	//	Highway
-		std::cout << (int)pb.getCeil(1, 0).isConnPieceCeil(pb.getCeil(5, 0)) << std::endl;	//	none
-	}
-
 }
 

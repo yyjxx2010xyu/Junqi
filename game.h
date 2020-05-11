@@ -33,6 +33,7 @@ class Coord
 {
 public:
 	int x, y;
+	Coord(int _x, int _y) :x(_x), y(_y) {}
 };
 
 /*	
@@ -44,6 +45,7 @@ class Movement
 {
 public:
 	Coord From, To;
+	Movement(Coord _From, Coord _To) :From(_From), To(_To) {}
 };
 
 
@@ -77,5 +79,4 @@ public:
 	Movement Search(Chess Board, int Depth = 5);
 private:
 	Eval_Move _Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_State);
-
 };
