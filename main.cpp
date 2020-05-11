@@ -12,6 +12,7 @@
 
 Movement Human_Input()
 {
+	std::cout << "请输入移动坐标，用大写比如(H0J0):";
 	std::string Str;
 	std::cin >> Str;
 	return Movement(Coord(Chess_H - (Str[0] - 'A') - 1, Str[1] - '0'), Coord(Chess_H - (Str[2] - 'A') - 1, Str[3] - '0'));
