@@ -194,7 +194,7 @@ static bool Is_GongBing(char ch)
 //	合法位置
 static bool Is_Valid(int x, int y)
 {
-	return x >= 0 && x < Chess_H&& y >= 0 && y < Chess_W;
+	return (x >= 0 && x < Chess_H&& y >= 0 && y < Chess_W);
 }
 
 
@@ -216,10 +216,30 @@ static bool Has_Chess(char ch)
 	return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
 }
 
+static bool Special_move(int x, int y, int cur_x, int cur_y) 
+{
+	if (abs(x - cur_x) + abs(y - cur_y) > 1)
+		return false;
+	return true;
+}
+
 bool Chess::Is_Movable(Movement M)
 {
 	char From = Board[M.From.x][M.From.y];
 	char To = Board[M.To.x][M.To.y];
+	int x = M.From.x;
+	int y = M.From.y;
+	int cur_x = M.To.x;
+	int cur_y = M.To.y;
+
+	//  特殊位置判断
+	//  目的地为山界
+	if (Field[cur_x][cur_y] == (int)BoardClass::empty)
+		return false;
+	//  不可侧向移动的位置
+	if (SpecialPos[cur_x][cur_y] || SpecialPos[x][y])
+		return Special_move(x, y, cur_x, cur_y);
+	//  吃子判断
 	//	强制要求吃子
 	if (To == BLANK)
 		return false;
@@ -256,26 +276,55 @@ output:
 function:
 	寻找搜索方向，有着充分的想象空间
 */
+void Chess::BFSSearch(int x, int y, std::vector<Coord> &Pos)
+{
+	static bool check[Chess_H][Chess_W] = {0};
+	check[x][y] = true;
+	//只在碰到棋子时结束，且目前只记录碰到棋子时的坐标
+	if (Has_Chess(Board[x][y])) {
+		return;
+		Coord P(x,y);
+		Pos.push_back(P);
+	}
+	for (int k = 0; k < 4; k++) {
+		if (!check[x + HV_DirectX[k]][y + HV_DirectY[k]] && Is_Valid(x + HV_DirectX[k], y + HV_DirectY[k]))
+			if (Is_Railway(x + HV_DirectX[k], y + HV_DirectY[k]))
+				BFSSearch(x + HV_DirectX[k], y + HV_DirectY[k],Pos);
+	}
+}
 std::vector<Movement> Chess::Search_Movement(const int& Role)
 {
 	std::vector<Movement> Move;
 	Move.clear();
 
-	for (int i = 0; i < Chess_H; i++)
-		for (int j = 0; j < Chess_W; j++)
+	for (int i = 0; i < Chess_H; i++) {
+		for (int j = 0; j < Chess_W; j++) {
 			if (Is_Role_Chess(Board[i][j], Role))
 			{
-				if (Is_GongBing(Board[i][j]))
-					continue;
-				//	std::vector<Coord> v2 = Railway(ceil);
-				//	v1.insert(v1.end(), v2.begin(), v2.end());
+				if (Is_GongBing(Board[i][j])) {
+					//只考虑在铁路上的情况，其他情况在下面会考虑到
+					if (Is_Railway(i, j)) {
+						std::vector<Coord> Pos;
+						Pos.clear();
+						BFSSearch(i, j, Pos);
+						for (int k = 0; k < Pos.size(); k++) {
+							if (Is_Role_Chess(Board[Pos[k].x][Pos[k].y], Role))
+								continue;
+							Movement M = Movement(Coord(i, j), Pos[k]);
+							if (!Is_Movable(M))
+								continue;
+							Move.push_back(M);
+						}
+					}
+				}
+				/*std::vector<Coord> v2 = Railway(ceil);
+				v1.insert(v1.end(), v2.begin(), v2.end());*/
 
 
-					//	上下左右方向，铁路上自动扩展
+				//	上下左右方向，铁路上自动扩展
 				for (int k = 0; k < 4; k++)
 				{
 					int cur_x = i, cur_y = j;
-
 					while (true)
 					{
 						cur_x += HV_DirectX[k];
@@ -289,19 +338,21 @@ std::vector<Movement> Chess::Search_Movement(const int& Role)
 						//	如果碰到棋子了
 						if (Has_Chess(Board[cur_x][cur_y]))
 							break;
-
 					}
 
 					if (!Is_Valid(cur_x, cur_y))
 						continue;
+					//  貌似强制吃子
 					if (!Has_Chess(Board[cur_x][cur_y]))
 						continue;
 					if (Is_Role_Chess(Board[cur_x][cur_y], Role))
 						continue;
-					//	如果起始位置在铁轨上，结束位置不在铁轨上，则不合法
+					//	如果起始位置在铁轨上，结束位置不在铁轨上,则不合法
 					if (!Is_Railway(cur_x, cur_y) && Is_Railway(i, j))
 						continue;
-
+					//  避免重复记录工兵的行进
+					if (Is_GongBing(Board[i][j]) && (abs(cur_x - i) + abs(cur_y - j) > 1))
+						continue;
 					Movement M = Movement(Coord(i, j), Coord(cur_x, cur_y));
 					if (!Is_Movable(M))
 						continue;
@@ -317,6 +368,8 @@ std::vector<Movement> Chess::Search_Movement(const int& Role)
 						continue;
 					if (!Is_Valid(cur_x, cur_y))
 						continue;
+					if (Is_Role_Chess(Board[cur_x][cur_y], Role))
+						continue;
 					Movement M = Movement(Coord(i, j), Coord(cur_x, cur_y));
 					if (!Is_Movable(M))
 						continue;
@@ -324,7 +377,9 @@ std::vector<Movement> Chess::Search_Movement(const int& Role)
 
 				}
 			}
-
+		}
+		//	std::cout <<"Move.size:"<< Move.size() << std::endl;
+	}
 	return Move;
 }
 

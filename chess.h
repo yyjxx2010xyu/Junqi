@@ -56,8 +56,8 @@ public:
 	Chess Apply_Move(const Movement& V);
 	void Display();
 	bool Is_Movable(Movement M);
-
 	void Set_Board(int x, int y, int ch);
+	void BFSSearch(int x, int y, std::vector<Coord>& Pos);
 };
 
 const int frontEndPos = 7;	//	前线位置
@@ -103,7 +103,22 @@ const bool Station[Chess_H][Chess_W]{
 	{0, 0, 0, 0, 0}
 };
 
-
+// 不可侧向移动的位置
+const bool SpecialPos[Chess_H][Chess_W]{
+	{1, 1, 1, 1, 1},
+	{0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0},
+	{1, 0, 1, 0, 1},
+	{0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0},
+	{0, 0, 0, 0, 0},
+	{1, 1, 1, 1, 1}
+};
 //	上下左右四个方向
 const int HV_DirectX[4] = { 1,0,0,-1 };
 const int HV_DirectY[4] = { 0,1,-1,0 };
