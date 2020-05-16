@@ -100,29 +100,29 @@ int Chess::Evaluater(const int x, const int y, const char ch)
 	int value = 0;;
 	//正常等级
 	if (ch == 'g' || ch == 'G')
-		value = 1;
+		value = 100;
 	else if (ch == 'p' || ch == 'P')
-		value = 1;
+		value = 100;
 	else if (ch == 'l' || ch == 'L')//X2
-		value = 2;
+		value = 200;
 	else if (ch == 'y' || ch == 'Y')//X3
-		value = 4;
+		value = 400;
 	else if (ch == 't' || ch == 'T')//X4
-		value = 8;
+		value = 800;
 	else if (ch == 'v' || ch == 'V')//X5
-		value = 16;
+		value = 1600;
 	else if (ch == 's' || ch == 'S')//X6
-		value = 32;
+		value = 3200;
 	else if (ch == 'j' || ch == 'J')//X7
-		value = 64;
+		value = 6400;
 	else if (ch == 'a' || ch == 'A')//X8
-		value = 128;
+		value = 12800;
 	else if (ch == 'f' || ch == 'F')//X8
-		value = 512;
+		value = 51200;
 	else if (ch == 'z' || ch == 'Z')
-		value = 8;//希望炸弹至少消灭团长，或者团长以下的单位可主动消灭炸弹
+		value = 800;//希望炸弹至少消灭团长，或者团长以下的单位可主动消灭炸弹
 	else if (ch == 'd' || ch == 'D')
-		value = 4;//地雷不视为威胁，营长或营长以下都可主动牺牲
+		value = 400;//地雷不视为威胁，营长或营长以下都可主动牺牲
 
 	//加入行营所占的权重，希望尽可能占领多的行营
 
