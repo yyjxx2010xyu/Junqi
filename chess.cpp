@@ -3,21 +3,21 @@
 
 /*
 input:
-Role	Ö´Æå·½
-	Role == Role_UPPER	±íÊ¾Ö´Æå·½Îª´óĞ´£¬¼´ÉÏ·½
-	Role == Role_LOWER	±íÊ¾Ö´Æå·½ÎªĞ¡Ğ´£¬¼´ÏÂ·½
+Role	æ‰§æ£‹æ–¹
+	Role == Role_UPPER	è¡¨ç¤ºæ‰§æ£‹æ–¹ä¸ºå¤§å†™ï¼Œå³ä¸Šæ–¹
+	Role == Role_LOWER	è¡¨ç¤ºæ‰§æ£‹æ–¹ä¸ºå°å†™ï¼Œå³ä¸‹æ–¹
 
 
 output:
-	true/false	µ±Ç°Ö´Æå·½ÎŞÆå¿É×ß/ÓĞÆå¿É×ß
+	true/false	å½“å‰æ‰§æ£‹æ–¹æ— æ£‹å¯èµ°/æœ‰æ£‹å¯èµ°
 
 function:
-	¸ù¾İÆåÅÌthis->Board£¬ÅĞ¶Ïµ±Ç°Ö´×Ó·½ÊÇ·ñÎŞÆå¿É×ß
+	æ ¹æ®æ£‹ç›˜this->Boardï¼Œåˆ¤æ–­å½“å‰æ‰§å­æ–¹æ˜¯å¦æ— æ£‹å¯èµ°
 */
 
 int Chess::Rank_Judgement(char a, char b)
 {
-	//ĞÂÎ»ÖÃÎª¿Õ
+	//æ–°ä½ç½®ä¸ºç©º
 	if (a == BLANK)
 		return UNDER;
 	if (b == BLANK)
@@ -26,15 +26,15 @@ int Chess::Rank_Judgement(char a, char b)
 		a = a - 'a' + 'A';
 	if (b >= 'a' && b <= 'z')
 		b = b - 'a' + 'A';
-	if (a == 'Z' || b == 'Z' || a == b)//ÌØÊâ£ºÕ¨µ¯
+	if (a == 'Z' || b == 'Z' || a == b)//ç‰¹æ®Šï¼šç‚¸å¼¹
 		return SAME_RANK;
-	if (a != 'G' && b == 'D' || a == 'D' && b != 'G')//ÌØÊâ£ºµØÀ×
+	if (a != 'G' && b == 'D' || a == 'D' && b != 'G')//ç‰¹æ®Šï¼šåœ°é›·
 		return SAME_RANK;
-	if (a == 'G' && b == 'D')//ÌØÊâ£º¹¤±øÅÅÀ×
+	if (a == 'G' && b == 'D')//ç‰¹æ®Šï¼šå·¥å…µæ’é›·
 		return ABOVE;
-	if (a == 'D' && b == 'G')//ÌØÊâ£º¹¤±øÅÅÀ×
+	if (a == 'D' && b == 'G')//ç‰¹æ®Šï¼šå·¥å…µæ’é›·
 		return UNDER;
-	//ÒÔÏÂÎªµÈ¼¶Ë³Ğò
+	//ä»¥ä¸‹ä¸ºç­‰çº§é¡ºåº
 	int a_order;
 	int b_order;
 	for (int i = 0; i < strlen(RANK); i++) {
@@ -52,10 +52,10 @@ int Chess::Rank_Judgement(char a, char b)
 
 bool Chess::Is_Over(const int& Role)
 {
-	//Ö»¿¼ÂÇÁËË«·½´ó±¾ÓªÄÚµÄ¾üÆìÓĞÃ»ÓĞ±»³Ô
+	//åªè€ƒè™‘äº†åŒæ–¹å¤§æœ¬è¥å†…çš„å†›æ——æœ‰æ²¡æœ‰è¢«åƒ
 	if ((Board[0][1] == 'F' || Board[0][3] == 'F') && (Board[12][1] == 'f' || Board[12][3] == 'f'))
 		return false;
-	//ÕÒµ½ÆåÅÌÄÚ¿ÉÒÆ¶¯µÄÆå×Ó
+	//æ‰¾åˆ°æ£‹ç›˜å†…å¯ç§»åŠ¨çš„æ£‹å­
 	char ch0 = 'A';
 	char ch1 = 'Z';
 	if (Role == ROLE_LOWER) {
@@ -81,51 +81,52 @@ bool Chess::Is_Over(const int& Role)
 
 /*
 input:
-Role	Ö´Æå·½
-	Role == Role_UPPER	±íÊ¾Ö´Æå·½Îª´óĞ´£¬¼´ÉÏ·½
-	Role == Role_LOWER	±íÊ¾Ö´Æå·½ÎªĞ¡Ğ´£¬¼´ÏÂ·½
+Role	æ‰§æ£‹æ–¹
+	Role == Role_UPPER	è¡¨ç¤ºæ‰§æ£‹æ–¹ä¸ºå¤§å†™ï¼Œå³ä¸Šæ–¹
+	Role == Role_LOWER	è¡¨ç¤ºæ‰§æ£‹æ–¹ä¸ºå°å†™ï¼Œå³ä¸‹æ–¹
 
 
 output:
-	Weight£¬ÆåÅÌÈ¨ÖØ£¬ µ±Ç°µÄÖ´×Ó·½Æå¼õÈ¥¶Ô·½Ö´×Ó·½Æå
+	Weightï¼Œæ£‹ç›˜æƒé‡ï¼Œ å½“å‰çš„æ‰§å­æ–¹æ£‹å‡å»å¯¹æ–¹æ‰§å­æ–¹æ£‹
 	Weight = Weigh_Role - Weight_Opp_Role
-	¶ÔÃ¿¸öÆå×Ó½øĞĞ¸³È¨£¬¾ßÌå¿ÉÒÔ×ÔĞĞ¸³Öµ¡£
+	å¯¹æ¯ä¸ªæ£‹å­è¿›è¡Œèµ‹æƒï¼Œå…·ä½“å¯ä»¥è‡ªè¡Œèµ‹å€¼ã€‚
 
 function:
-	¶ÔÆåÅÌµÄÆÀ¹Àº¯Êı
+	å¯¹æ£‹ç›˜çš„è¯„ä¼°å‡½æ•°
 */
 //const char RANK[] = "AJSVTYLPGF";
 int Chess::Evaluater(const int x, const int y, const char ch)
 {
 	int value = 0;;
-	//Õı³£µÈ¼¶
+	//æ­£å¸¸ç­‰çº§
 	if (ch == 'g' || ch == 'G')
-		value = 1;
+		value = 100;
 	else if (ch == 'p' || ch == 'P')
-		value = 1;
+		value = 100;
 	else if (ch == 'l' || ch == 'L')//X2
-		value = 2;
+		value = 200;
 	else if (ch == 'y' || ch == 'Y')//X3
-		value = 4;
+		value = 400;
 	else if (ch == 't' || ch == 'T')//X4
-		value = 8;
+		value = 800;
 	else if (ch == 'v' || ch == 'V')//X5
-		value = 16;
+		value = 1600;
 	else if (ch == 's' || ch == 'S')//X6
-		value = 32;
+		value = 3200;
 	else if (ch == 'j' || ch == 'J')//X7
-		value = 64;
+		value = 6400;
 	else if (ch == 'a' || ch == 'A')//X8
-		value = 128;
+		value = 12800;
 	else if (ch == 'f' || ch == 'F')//X8
-		value = 512;
+		value = 51200;
 	else if (ch == 'z' || ch == 'Z')
-		value = 8;//Ï£ÍûÕ¨µ¯ÖÁÉÙÏûÃğÍÅ³¤£¬»òÕßÍÅ³¤ÒÔÏÂµÄµ¥Î»¿ÉÖ÷¶¯ÏûÃğÕ¨µ¯
+		value = 800;//å¸Œæœ›ç‚¸å¼¹è‡³å°‘æ¶ˆç­å›¢é•¿ï¼Œæˆ–è€…å›¢é•¿ä»¥ä¸‹çš„å•ä½å¯ä¸»åŠ¨æ¶ˆç­ç‚¸å¼¹
 	else if (ch == 'd' || ch == 'D')
-		value = 4;//µØÀ×²»ÊÓÎªÍşĞ²£¬Óª³¤»òÓª³¤ÒÔÏÂ¶¼¿ÉÖ÷¶¯ÎşÉü
+		value = 400;//åœ°é›·ä¸è§†ä¸ºå¨èƒï¼Œè¥é•¿æˆ–è¥é•¿ä»¥ä¸‹éƒ½å¯ä¸»åŠ¨ç‰ºç‰²
 
-	//¼ÓÈëĞĞÓªËùÕ¼µÄÈ¨ÖØ£¬Ï£Íû¾¡¿ÉÄÜÕ¼Áì¶àµÄĞĞÓª
-	return (int)(1 + 0.0005 * Station[x][y]) * value;
+	//åŠ å…¥è¡Œè¥æ‰€å çš„æƒé‡ï¼Œå¸Œæœ›å°½å¯èƒ½å é¢†å¤šçš„è¡Œè¥
+	return (int)(1 + 0.005 * Station[x][y] + 0.001 * Railway[x][y]) * value;
+
 }
 
 int Chess::Evaluate_Chess(const int& Role)
@@ -149,13 +150,13 @@ int Chess::Evaluate_Chess(const int& Role)
 
 /*
 input:
-	Move			×ßÆå·½Ïò
+	Move			èµ°æ£‹æ–¹å‘
 
 output:
-	Next_Board		¸üĞÂÖ®ºóµÄÆåÅÌ
+	Next_Board		æ›´æ–°ä¹‹åçš„æ£‹ç›˜
 
 function:
-	Í¨¹ıMove½áºÏthis->BoardÀ´¸üĞÂÆåÅÌ
+	é€šè¿‡Moveç»“åˆthis->Boardæ¥æ›´æ–°æ£‹ç›˜
 */
 
 Chess Chess::Apply_Move(const Movement& V)
@@ -185,28 +186,28 @@ Chess Chess::Apply_Move(const Movement& V)
 
 /*
 function:
-	¼òµ¥µÄ¿ÉÊÓ»¯ÆåÅÌĞ§¹û£¬ÓÃ-+|±íÊ¾¼´¿É£¬Ö÷ÒªÓÃÓÚµ÷ÊÔ¡£
-	¼ÙÈçÓĞÑÕÉ«Çø±ğ¾Í¸üºÃÁË
+	ç®€å•çš„å¯è§†åŒ–æ£‹ç›˜æ•ˆæœï¼Œç”¨-+|è¡¨ç¤ºå³å¯ï¼Œä¸»è¦ç”¨äºè°ƒè¯•ã€‚
+	å‡å¦‚æœ‰é¢œè‰²åŒºåˆ«å°±æ›´å¥½äº†
 */
 void Chess::Display()
 {
 	const Coord board = { Chess_W, Chess_H };
 	//	std::cout << "Display Testcase" << std::endl;
-	//	1. ÇåÆÁ
+	//	1. æ¸…å±
 	cls();
-	//	2. ÉèÖÃ½çÃæ´óĞ¡
+	//	2. è®¾ç½®ç•Œé¢å¤§å°
 	setconsoleborder(130, 40);
 
-	//	3. »­½çÃæºÍÆå×Ó
+	//	3. ç”»ç•Œé¢å’Œæ£‹å­
 	common_draw_background(board, true, true, true, { 0,0 });
 	Display_Chess(Board, board, true, true);
-	//	4. »Ö¸´Ä¬ÈÏÉèÖÃ
+	//	4. æ¢å¤é»˜è®¤è®¾ç½®
 	setcolor();
 	std::cout << std::endl << std::endl;
 }
 
 
-//	¸ÃÆå×ÓÎªÖ´Æå·½
+//	è¯¥æ£‹å­ä¸ºæ‰§æ£‹æ–¹
 static bool Is_Role_Chess(char ch, int Role)
 {
 	if (Role == ROLE_UPPER && ch >= 'A' && ch <= 'Z')
@@ -217,35 +218,35 @@ static bool Is_Role_Chess(char ch, int Role)
 }
 
 
-//	¸ÃÆå×ÓÎª¹¤±ø
+//	è¯¥æ£‹å­ä¸ºå·¥å…µ
 static bool Is_GongBing(char ch)
 {
 	return (ch == 'g') || (ch == 'G');
 }
 
-//	ºÏ·¨Î»ÖÃ
+//	åˆæ³•ä½ç½®
 static bool Is_Valid(int x, int y)
 {
-	//  Ä¿µÄµØÎªÉ½½ç
+	//  ç›®çš„åœ°ä¸ºå±±ç•Œ
 	if (Field[x][y] == (int)BoardClass::empty)
 		return false;
 	return (x >= 0 && x < Chess_H&& y >= 0 && y < Chess_W);
 }
 
 
-//	ÔÚÌúÂ·ÉÏ
+//	åœ¨é“è·¯ä¸Š
 static bool Is_Railway(int x, int y)
 {
 	return Railway[x][y];
 }
 
-//	ÔÚĞĞÓªÖĞ
+//	åœ¨è¡Œè¥ä¸­
 static bool Is_Station(int x, int y)
 {
 	return Station[x][y];
 }
 
-//	ÓĞÆå×Ó
+//	æœ‰æ£‹å­
 static bool Has_Chess(char ch)
 {
 	return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
@@ -267,15 +268,15 @@ bool Chess::Is_Movable(Movement M)
 	int cur_x = M.To.x;
 	int cur_y = M.To.y;
 
-	//  ÌØÊâÎ»ÖÃÅĞ¶Ï
-	//  Ä¿µÄµØÎªÉ½½ç
+	//  ç‰¹æ®Šä½ç½®åˆ¤æ–­
+	//  ç›®çš„åœ°ä¸ºå±±ç•Œ
 	if (Field[cur_x][cur_y] == (int)BoardClass::empty)
 		return false;
-	//  ²»¿É²àÏòÒÆ¶¯µÄÎ»ÖÃ
+	//  ä¸å¯ä¾§å‘ç§»åŠ¨çš„ä½ç½®
 	if (SpecialPos[cur_x][cur_y] || SpecialPos[x][y])
 		return Special_move(x, y, cur_x, cur_y);
-	//  ³Ô×ÓÅĞ¶Ï
-	//	Ç¿ÖÆÒªÇó³Ô×Ó
+	//  åƒå­åˆ¤æ–­
+	//	å¼ºåˆ¶è¦æ±‚åƒå­
 	if (To == BLANK)
 		return false;
 
@@ -284,11 +285,11 @@ bool Chess::Is_Movable(Movement M)
 	if (chessMap.at(From) == chessClass::junqi)
 		return false;
 
-	//	¶Ô·½µÄÆå×Ó´ó
+	//	å¯¹æ–¹çš„æ£‹å­å¤§
 	if (Rank_Judgement(From, To) == UNDER)
 		return false;
 
-	//	·½ÏòÊÇĞĞÓªÇÒÓĞÆå×Ó
+	//	æ–¹å‘æ˜¯è¡Œè¥ä¸”æœ‰æ£‹å­
 	if (Is_Station(M.To.x, M.To.y) && Has_Chess(To))
 		return false;
 	return true;
@@ -301,21 +302,51 @@ void Chess::Set_Board(int x, int y, int ch)
 
 /*
 input:
-Role	Ö´Æå·½
-	Role == Role_UPPER	±íÊ¾Ö´Æå·½Îª´óĞ´£¬¼´ÉÏ·½
-	Role == Role_LOWER	±íÊ¾Ö´Æå·½ÎªĞ¡Ğ´£¬¼´ÏÂ·½
+Role	æ‰§æ£‹æ–¹
+	Role == Role_UPPER	è¡¨ç¤ºæ‰§æ£‹æ–¹ä¸ºå¤§å†™ï¼Œå³ä¸Šæ–¹
+	Role == Role_LOWER	è¡¨ç¤ºæ‰§æ£‹æ–¹ä¸ºå°å†™ï¼Œå³ä¸‹æ–¹
 
 output:
-	Move ±íÊ¾Ã¿¸ö¿ÉĞĞµÄMovement£¬´æ´¢ÔÚvectorÖĞ
+	Move è¡¨ç¤ºæ¯ä¸ªå¯è¡Œçš„Movementï¼Œå­˜å‚¨åœ¨vectorä¸­
 
 function:
-	Ñ°ÕÒËÑË÷·½Ïò£¬ÓĞ×Å³ä·ÖµÄÏëÏó¿Õ¼ä
+	å¯»æ‰¾æœç´¢æ–¹å‘ï¼Œæœ‰ç€å……åˆ†çš„æƒ³è±¡ç©ºé—´
 */
-void Chess::BFSSearch(int x, int y, std::vector<Coord>& Pos)
+
+int Chess::Selector(Chess chess,const int&Role,Movement M)
+{
+	int before = Evaluate_Chess(Role);
+	chess.Apply_Move(M);
+	int after = Evaluate_Chess(Role);
+	return after - before;
+}
+bool cmp(std::pair<int, Movement> a, std::pair<int, Movement> b)
+{
+	return a.first > b.first;
+}
+std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M,const int&Role)
+{
+	Chess T;
+	for (int i = 0; i < Chess_H; i++)
+		for (int j = 0; j < Chess_W; j++)
+			T.Board[i][j] = this->Board[i][j];//å¤åˆ»ä¸€ä¸ªæ£‹ç›˜
+	std::vector<std::pair<int, Movement>> pair;
+	for (int i = 0; i < M.size(); i++) {
+		int temp = Selector(T,Role,M[i]);
+		pair.push_back(std::make_pair(temp, M[i]));
+	}
+	sort(pair.begin(), pair.end(), [](std::pair<int, Movement> a, std::pair<int, Movement> b) {return a.first > b.first; });
+	std::vector<Movement> result;
+	for (int i = 0; i < pair.size(); i++)
+		result.push_back(pair[i].second);
+	return result;
+}
+
+void Chess::BFSSearch(int x, int y, std::vector<Coord> &Pos)
 {
 	static bool check[Chess_H][Chess_W] = { 0 };
 	check[x][y] = true;
-	//Ö»ÔÚÅöµ½Æå×ÓÊ±½áÊø£¬ÇÒÄ¿Ç°Ö»¼ÇÂ¼Åöµ½Æå×ÓÊ±µÄ×ø±ê
+	//åªåœ¨ç¢°åˆ°æ£‹å­æ—¶ç»“æŸï¼Œä¸”ç›®å‰åªè®°å½•ç¢°åˆ°æ£‹å­æ—¶çš„åæ ‡
 	if (Has_Chess(Board[x][y])) {
 		Coord P(x, y);
 		Pos.push_back(P);
@@ -369,7 +400,7 @@ std::vector<Movement> Chess::Search_Movement(const int& Role)
 			if (Is_Role_Chess(Board[i][j], Role) && chessMap.at(Board[i][j])!= chessClass::junqi)
 			{
 				if (Is_GongBing(Board[i][j])) {
-					//Ö»¿¼ÂÇÔÚÌúÂ·ÉÏµÄÇé¿ö£¬ÆäËûÇé¿öÔÚÏÂÃæ»á¿¼ÂÇµ½
+					//åªè€ƒè™‘åœ¨é“è·¯ä¸Šçš„æƒ…å†µï¼Œå…¶ä»–æƒ…å†µåœ¨ä¸‹é¢ä¼šè€ƒè™‘åˆ°
 					if (Is_Railway(i, j)) {
 						std::vector<Coord> Pos;
 						Pos.clear();
@@ -386,7 +417,7 @@ std::vector<Movement> Chess::Search_Movement(const int& Role)
 				}
 
 
-				//	ÉÏÏÂ×óÓÒ·½Ïò£¬ÌúÂ·ÉÏ×Ô¶¯À©Õ¹
+				//	ä¸Šä¸‹å·¦å³æ–¹å‘ï¼Œé“è·¯ä¸Šè‡ªåŠ¨æ‰©å±•
 				for (int k = 0; k < 4; k++)
 					for (int d = 1; d <= Chess_H; d++)
 					{
@@ -395,12 +426,12 @@ std::vector<Movement> Chess::Search_Movement(const int& Role)
 						if (!Is_Valid(next_x, next_y))
 							break;
 						bool Ret = Expand_Move(Move, i, j, next_x, next_y, Board[next_x][next_y], Role);
-						//	Èç¹ûÒÑ¾­Åöµ½Æå×Ó»òÕßÍÑÀëÌú¹ì£¬¼´²»ÄÜ¹»ÔÙËÑË÷ÁË
+						//	å¦‚æœå·²ç»ç¢°åˆ°æ£‹å­æˆ–è€…è„±ç¦»é“è½¨ï¼Œå³ä¸èƒ½å¤Ÿå†æœç´¢äº†
 						if (!Ret)
 							break;
 					}
 
-				// Ğ±Ïò·½Ïò
+				// æ–œå‘æ–¹å‘
 				for (int k = 0; k < 4; k++)
 				{
 					int next_x = i + Cross_DirectX[k];
@@ -420,7 +451,7 @@ std::vector<Movement> Chess::Search_Movement(const int& Role)
 
 
 
-//	·µ»ØÆåÅÌÏàÓ¦Î»ÖÃµÄÑÕÉ«
+//	è¿”å›æ£‹ç›˜ç›¸åº”ä½ç½®çš„é¢œè‰²
 inline int isColor(int linePos) {
 	if (linePos >= 0 && linePos < frontEndPos - 1)
 		return COLOR_BLUE;
@@ -430,10 +461,10 @@ inline int isColor(int linePos) {
 		return COLOR_RED;
 }
 
-//	»­ÆåÅÌ
+//	ç”»æ£‹ç›˜
 inline void common_draw_background(const Coord sizeofall, bool border, bool solid, bool display, const Coord cursor) {
-	const char* Solid[][13] = { {"¨U", "¨T","¨X" ,"¨[" ,"¨^" , "¨a", "¨d" ,"¨g" ,"¨j¨T","¨m¨T","¨T¨p","  " ,"  ¨U" },
-	{ "©§","©¥","©³","©·","©»","©¿","©Ç","©Ï","©×©¥","©ß©¥","©¥©ï" ,"  " ,"  ©§" } };
+	const char* Solid[][13] = { {"â•‘", "â•","â•”" ,"â•—" ,"â•š" , "â•", "â• " ,"â•£" ,"â•¦â•","â•©â•","â•â•¬","  " ,"  â•‘" },
+	{ "â”ƒ","â”","â”","â”“","â”—","â”›","â”£","â”«","â”³â”","â”»â”","â”â•‹" ,"  " ,"  â”ƒ" } };
 	enum class Pos { vertical, horizonal, lefttop, righttop, leftbottom, rightbottom, leftmid, rightmid, upmid, downmid, center, empty, straight };
 
 	//	four corners
@@ -480,7 +511,7 @@ inline void common_draw_background(const Coord sizeofall, bool border, bool soli
 	}
 }
 
-//	»­Æå×Ó
+//	ç”»æ£‹å­
 inline void Display_Chess(std::vector<std::vector<char> >  Board, class Coord sizeofall, bool border, bool display) {
 	if (Board.size() != sizeofall.y || Board[0].size() != sizeofall.x)
 		return;
