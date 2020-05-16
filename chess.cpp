@@ -1,5 +1,6 @@
 #include <iostream>
 #include "chess.h"
+#include "game.h"
 
 /*
 input:
