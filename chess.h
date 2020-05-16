@@ -52,6 +52,7 @@ public:
 	}
 	bool Is_Over(const int& Role);
 	int Evaluate_Chess(const int& Role);
+	int Evaluater(const int x, const int y, const char ch);
 	std::vector<Movement>  Search_Movement(const int& State);
 	Chess Apply_Move(const Movement& V);
 	void Display();

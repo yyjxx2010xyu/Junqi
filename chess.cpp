@@ -94,7 +94,39 @@ output:
 function:
 	对棋盘的评估函数
 */
+//const char RANK[] = "AJSVTYLPGF";
+int Chess::Evaluater(const int x, const int y, const char ch)
+{
+	int value = 0;;
+	//正常等级
+	if (ch == 'g' || ch == 'G')
+		value = 1;
+	else if (ch == 'p' || ch == 'P')
+		value = 1;
+	else if (ch == 'l' || ch == 'L')//X2
+		value = 2;
+	else if (ch == 'y' || ch == 'Y')//X3
+		value = 4;
+	else if (ch == 't' || ch == 'T')//X4
+		value = 8;
+	else if (ch == 'v' || ch == 'V')//X5
+		value = 16;
+	else if (ch == 's' || ch == 'S')//X6
+		value = 32;
+	else if (ch == 'j' || ch == 'J')//X7
+		value = 64;
+	else if (ch == 'a' || ch == 'A')//X8
+		value = 128;
+	else if (ch == 'f' || ch == 'F')//X8
+		value = 512;
+	else if (ch == 'z' || ch == 'Z')
+		value = 8;//希望炸弹至少消灭团长，或者团长以下的单位可主动消灭炸弹
+	else if (ch == 'd' || ch == 'D')
+		value = 4;//地雷不视为威胁，营长或营长以下都可主动牺牲
 
+	//加入行营所占的权重，希望尽可能占领多的行营
+	return (int)(1+0.0005*Station[x][y])*value;
+}
 
 int Chess::Evaluate_Chess(const int& Role)
 {
@@ -103,9 +135,9 @@ int Chess::Evaluate_Chess(const int& Role)
 	for (int i = 0; i < Chess_H; i++) {
 		for (int j = 0; j < Chess_W; j++) {
 			if (Board[i][j] >= 'A' && Board[i][j] <= 'Z')
-				UPPER++;
+				UPPER += Evaluater(i, j, Board[i][j]);
 			else
-				LOWER++;
+				LOWER += Evaluater(i, j, Board[i][j]);
 		}
 	}
 	if (Role == ROLE_LOWER)
@@ -282,10 +314,12 @@ void Chess::BFSSearch(int x, int y, std::vector<Coord> &Pos)
 	check[x][y] = true;
 	//只在碰到棋子时结束，且目前只记录碰到棋子时的坐标
 	if (Has_Chess(Board[x][y])) {
-		return;
 		Coord P(x,y);
 		Pos.push_back(P);
+		return;
 	}
+	Coord P(x, y);
+	Pos.push_back(P);
 	for (int k = 0; k < 4; k++) {
 		if (!check[x + HV_DirectX[k]][y + HV_DirectY[k]] && Is_Valid(x + HV_DirectX[k], y + HV_DirectY[k]))
 			if (Is_Railway(x + HV_DirectX[k], y + HV_DirectY[k]))
