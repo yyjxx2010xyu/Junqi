@@ -97,7 +97,7 @@ function:
 //const char RANK[] = "AJSVTYLPGF";
 int Chess::Evaluater(const int x, const int y, const char ch)
 {
-	int value = 0;;
+	int value = 0;
 	//正常等级
 	if (ch == 'g' || ch == 'G')
 		value = 100;
