@@ -59,8 +59,6 @@ public:
 	bool Is_Movable(Movement M);
 	void Set_Board(int x, int y, int ch);
 	void BFSSearch(int x, int y, std::vector<Coord>& Pos);
-	std::vector<Movement> SelectMoveMent(std::vector <Movement> M, const int& Role);
-	int Selector(Chess chess,const int& Role, Movement M);
 };
 
 const int frontEndPos = 7;	//	前线位置
@@ -73,19 +71,19 @@ inline void Display_Chess(std::vector<std::vector<char> >  Board, class Coord si
 
 
 //	铁路位置
-const int Railway[Chess_H][Chess_W]{
+const bool Railway[Chess_H][Chess_W]{
 	{0, 0, 0, 0, 0},
-	{2, 1, 1, 1, 2},
+	{1, 1, 1, 1, 1},
 	{1, 0, 0, 0, 1},
 	{1, 0, 0, 0, 1},
 	{1, 0, 0, 0, 1},
-	{3, 1, 3, 1, 3},
+	{1, 1, 1, 1, 1},
 	{1, 0, 1, 0, 1},
-	{3, 1, 3, 1, 3},
+	{1, 1, 1, 1, 1},
 	{1, 0, 0, 0, 1},
 	{1, 0, 0, 0, 1},
 	{1, 0, 0, 0, 1},
-	{2, 1, 2, 1, 2},
+	{1, 1, 1, 1, 1},
 	{0, 0, 0, 0, 0}
 };
 
