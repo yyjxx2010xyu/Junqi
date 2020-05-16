@@ -73,19 +73,19 @@ inline void Display_Chess(std::vector<std::vector<char> >  Board, class Coord si
 
 
 //	ÌúÂ·Î»ÖÃ
-const bool Railway[Chess_H][Chess_W]{
+const int Railway[Chess_H][Chess_W]{
 	{0, 0, 0, 0, 0},
-	{1, 1, 1, 1, 1},
+	{2, 1, 2, 1, 2},
 	{1, 0, 0, 0, 1},
 	{1, 0, 0, 0, 1},
 	{1, 0, 0, 0, 1},
-	{1, 1, 1, 1, 1},
+	{2, 1, 3, 1, 2},
 	{1, 0, 1, 0, 1},
-	{1, 1, 1, 1, 1},
+	{2, 1, 3, 1, 2},
 	{1, 0, 0, 0, 1},
 	{1, 0, 0, 0, 1},
 	{1, 0, 0, 0, 1},
-	{1, 1, 1, 1, 1},
+	{2, 1, 1, 1, 2},
 	{0, 0, 0, 0, 0}
 };
 

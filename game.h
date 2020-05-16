@@ -76,7 +76,7 @@ protected:
 	int Time_Limit;
 public:
 	void Arg_Init(int argc, char * argv[]);
-	Movement Search(Chess Board, int Depth = 5);
+	Movement Search(Chess Board, int Depth = 4);
 private:
 	Eval_Move _Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_State);
 };
