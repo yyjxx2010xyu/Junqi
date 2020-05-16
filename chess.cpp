@@ -1,5 +1,6 @@
 #include <iostream>
 #include "chess.h"
+#include "game.h"
 
 /*
 input:
@@ -126,8 +127,8 @@ int Chess::Evaluater(const int x, const int y, const char ch)
 
 	//加入行营所占的权重，希望尽可能占领多的行营
 
-	
-	return (int)(1 + 0.005 * Station[x][y] + 0.001 * Railway[x][y]) * value;
+
+	return (int)((double)(1 + 0.005 * (double)Station[x][y] + 0.001 * (double)Railway[x][y]) * value);
 }
 
 int Chess::Evaluate_Chess(const int& Role)
@@ -314,7 +315,7 @@ function:
 	寻找搜索方向，有着充分的想象空间
 */
 
-int Chess::Selector(Chess chess,const int&Role,Movement M)
+int Chess::Selector(Chess chess, const int& Role, Movement M)
 {
 	int before = Evaluate_Chess(Role);
 	chess.Apply_Move(M);
@@ -325,7 +326,7 @@ bool cmp(std::pair<int, Movement> a, std::pair<int, Movement> b)
 {
 	return a.first > b.first;
 }
-std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M,const int&Role)
+std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int& Role)
 {
 	Chess T;
 	for (int i = 0; i < Chess_H; i++)
@@ -333,7 +334,7 @@ std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M,const int&R
 			T.Board[i][j] = this->Board[i][j];//复刻一个棋盘
 	std::vector<std::pair<int, Movement>> pair;
 	for (int i = 0; i < M.size(); i++) {
-		int temp = Selector(T,Role,M[i]);
+		int temp = Selector(T, Role, M[i]);
 		pair.push_back(std::make_pair(temp, M[i]));
 	}
 	sort(pair.begin(), pair.end(), [](std::pair<int, Movement> a, std::pair<int, Movement> b) {return a.first > b.first; });
@@ -344,9 +345,9 @@ std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M,const int&R
 }
 
 
-void Chess::BFSSearch(int x, int y, std::vector<Coord> &Pos)
+void Chess::BFSSearch(int x, int y, std::vector<Coord>& Pos)
 {
-	static bool check[Chess_H][Chess_W] = {0};
+	static bool check[Chess_H][Chess_W] = { 0 };
 	check[x][y] = true;
 	//只在碰到棋子时结束，且目前只记录碰到棋子时的坐标
 	if (Has_Chess(Board[x][y])) {
@@ -363,18 +364,18 @@ void Chess::BFSSearch(int x, int y, std::vector<Coord> &Pos)
 	}
 }
 
-bool Expand_Move(std::vector<Movement>& Move, const int cur_x, const int cur_y, const int next_x, const int next_y, const char next_ch, const int Role)
+bool Expand_Move(std::vector<Movement>& Move, const int cur_x, const int cur_y, const int next_x, const int next_y, const char next_ch, const int Role, const int distance)
 {
 	Movement V = Movement(Coord(cur_x, cur_y), Coord(next_x, next_y));
-	if (!(Is_Railway(cur_x, cur_y) && Is_Railway(next_y, next_y)))
-		return false;
 	if (Is_Role_Chess(next_ch, Role))
 		return false;
 	if (Has_Chess(next_ch))
-	{	
+	{
 		Move.push_back(V);
 		return false;
-	}	
+	}
+	if (Is_Railway(cur_x, cur_y) && !Is_Railway(next_y, next_y) && distance > 1)
+		return false;
 	Move.push_back(V);
 	return true;
 }
@@ -399,7 +400,7 @@ std::vector<Movement> Chess::Search_Movement(const int& Role)
 
 	for (int i = 0; i < Chess_H; i++) {
 		for (int j = 0; j < Chess_W; j++) {
-			if (Is_Role_Chess(Board[i][j], Role) && chessMap.at(Board[i][j])!= chessClass::junqi)
+			if (Is_Role_Chess(Board[i][j], Role) && chessMap.at(Board[i][j]) != chessClass::junqi)
 			{
 				if (Is_GongBing(Board[i][j])) {
 					//只考虑在铁路上的情况，其他情况在下面会考虑到
@@ -427,9 +428,9 @@ std::vector<Movement> Chess::Search_Movement(const int& Role)
 						int next_y = j + HV_DirectY[k] * d;
 						if (!Is_Valid(next_x, next_y))
 							break;
-						bool Ret = Expand_Move(Move, i, j, next_x, next_y, Board[next_x][next_y], Role);
+						bool Ret = Expand_Move(Move, i, j, next_x, next_y, Board[next_x][next_y], Role, d);
 						//	如果已经碰到棋子或者脱离铁轨，即不能够再搜索了
-						if (!Ret)
+						if (!Ret || !Is_Railway(i, j))
 							break;
 					}
 
@@ -439,7 +440,7 @@ std::vector<Movement> Chess::Search_Movement(const int& Role)
 					int next_x = i + Cross_DirectX[k];
 					int next_y = j + Cross_DirectY[k];
 					if (!Is_Valid(next_x, next_y))
-						break;
+						continue;
 					bool _ = Cross_Move(Move, i, j, next_x, next_y, Board[next_x][next_y], Role);
 				}
 			}
