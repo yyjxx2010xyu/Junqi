@@ -2,6 +2,7 @@
 #include <vector>
 #include <cassert>
 #include "game.h"
+#include "connect.h"
 
 const int ROLE_UPPER = 1;
 const int ROLE_LOWER = 0;
@@ -96,7 +97,7 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 		return std::make_pair(Cur_Board.Evaluate_Chess(this->Role), std::vector<Movement>());
 	}
 
-
+	Connect Con;
 	std::cout << "Depth" << Depth << "Alpha" << Alpha << "Beta" << Beta << std::endl;
 	//	极大化当前Eval的Player
 	if (Player == PlayerType::MaximizingPlayer)
@@ -108,6 +109,7 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 		for (std::vector<Movement>::iterator iter = Move.begin(); iter != Move.end(); iter++)
 		{
 			Movement V = *iter;
+		//	Con.Send_Move(V);测试用
 			Chess Next_Board = Cur_Board.Apply_Move(V);
 			Eval_Move Ret = _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role));
 
@@ -137,12 +139,13 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 		for (std::vector<Movement>::iterator iter = Move.begin(); iter != Move.end(); iter++)
 		{
 			Movement V = *iter;
+		//	Con.Send_Move(V);测试用
 			Chess Next_Board = Cur_Board.Apply_Move(V);
 			Eval_Move Ret = _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MaximizingPlayer, Oppsite_Role(Cur_Role));
 
 			int Eval = Ret.first;
 			std::vector<Movement> Move_His = Ret.second;
-
+			
 			if (Eval < Min_Eval)
 			{
 				Min_Eval = Eval;
