@@ -101,32 +101,34 @@ int Chess::Evaluater(const int x, const int y, const char ch)
 	int value = 0;;
 	//正常等级
 	if (ch == 'g' || ch == 'G')
-		value = 1;
+		value = 100;
 	else if (ch == 'p' || ch == 'P')
-		value = 1;
+		value = 100;
 	else if (ch == 'l' || ch == 'L')//X2
-		value = 2;
+		value = 200;
 	else if (ch == 'y' || ch == 'Y')//X3
-		value = 4;
+		value = 400;
 	else if (ch == 't' || ch == 'T')//X4
-		value = 8;
+		value = 800;
 	else if (ch == 'v' || ch == 'V')//X5
-		value = 16;
+		value = 1600;
 	else if (ch == 's' || ch == 'S')//X6
-		value = 32;
+		value = 3200;
 	else if (ch == 'j' || ch == 'J')//X7
-		value = 64;
+		value = 6400;
 	else if (ch == 'a' || ch == 'A')//X8
-		value = 128;
+		value = 12800;
 	else if (ch == 'f' || ch == 'F')//X8
-		value = 512;
+		value = 51200;
 	else if (ch == 'z' || ch == 'Z')
-		value = 8;//希望炸弹至少消灭团长，或者团长以下的单位可主动消灭炸弹
+		value = 800;//希望炸弹至少消灭团长，或者团长以下的单位可主动消灭炸弹
 	else if (ch == 'd' || ch == 'D')
-		value = 4;//地雷不视为威胁，营长或营长以下都可主动牺牲
+		value = 400;//地雷不视为威胁，营长或营长以下都可主动牺牲
 
 	//加入行营所占的权重，希望尽可能占领多的行营
-	return (int)(1 + 0.0005 * Station[x][y]) * value;
+
+	
+	return (int)(1 + 0.005 * Station[x][y] + 0.001 * Railway[x][y]) * value;
 }
 
 int Chess::Evaluate_Chess(const int& Role)
@@ -312,9 +314,40 @@ output:
 function:
 	寻找搜索方向，有着充分的想象空间
 */
-void Chess::BFSSearch(int x, int y, std::vector<Coord>& Pos)
+
+int Chess::Selector(Chess chess,const int&Role,Movement M)
 {
-	static bool check[Chess_H][Chess_W] = { 0 };
+	int before = Evaluate_Chess(Role);
+	chess.Apply_Move(M);
+	int after = Evaluate_Chess(Role);
+	return after - before;
+}
+bool cmp(std::pair<int, Movement> a, std::pair<int, Movement> b)
+{
+	return a.first > b.first;
+}
+std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M,const int&Role)
+{
+	Chess T;
+	for (int i = 0; i < Chess_H; i++)
+		for (int j = 0; j < Chess_W; j++)
+			T.Board[i][j] = this->Board[i][j];//复刻一个棋盘
+	std::vector<std::pair<int, Movement>> pair;
+	for (int i = 0; i < M.size(); i++) {
+		int temp = Selector(T,Role,M[i]);
+		pair.push_back(std::make_pair(temp, M[i]));
+	}
+	sort(pair.begin(), pair.end(), [](std::pair<int, Movement> a, std::pair<int, Movement> b) {return a.first > b.first; });
+	std::vector<Movement> result;
+	for (int i = 0; i < pair.size(); i++)
+		result.push_back(pair[i].second);
+	return result;
+}
+
+
+void Chess::BFSSearch(int x, int y, std::vector<Coord> &Pos)
+{
+	static bool check[Chess_H][Chess_W] = {0};
 	check[x][y] = true;
 	//只在碰到棋子时结束，且目前只记录碰到棋子时的坐标
 	if (Has_Chess(Board[x][y])) {
