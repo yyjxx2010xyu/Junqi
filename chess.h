@@ -26,6 +26,7 @@ const char BLANK = ' ';
 #define ABOVE 1
 #define SAME_RANK 0
 
+enum class PlayerType;
 
 /*
 存储方式就与Word中一样，上面用大写，下面用小写。
@@ -53,14 +54,14 @@ public:
 	bool Is_Over(const int& Role);
 	int Evaluate_Chess(const int& Role);
 	int Evaluater(const int x, const int y, const char ch);
-	std::vector<Movement>  Search_Movement(const int& State);
+	std::vector<Movement>  Search_Movement(const int& State, PlayerType Player);
 	Chess Apply_Move(const Movement& V);
 	void Display();
 	bool Is_Movable(Movement M);
 	void Set_Board(int x, int y, int ch);
 	void BFSSearch(int x, int y, std::vector<Coord>& Pos);
 	int Selector(Chess chess, const int& Role, Movement M);
-	std::vector<Movement> SelectMoveMent(std::vector <Movement> M, const int& Role);
+	std::vector<Movement> SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player);
 };
 
 const int frontEndPos = 7;	//	前线位置

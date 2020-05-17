@@ -128,7 +128,7 @@ int Chess::Evaluater(const int x, const int y, const char ch)
 	//加入行营所占的权重，希望尽可能占领多的行营
 
 
-	return (int)((double)(1 + 0.005 * (double)Station[x][y] + 0.001 * (double)Railway[x][y]) * value);
+	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.002 * (double)Railway[x][y]) * (double)value);
 }
 
 int Chess::Evaluate_Chess(const int& Role)
@@ -198,7 +198,7 @@ void Chess::Display()
 	//	1. 清屏
 	cls();
 	//	2. 设置界面大小
-	setconsoleborder(130, 40);
+	setconsoleborder(130, 40, 130, 800);
 
 	//	3. 画界面和棋子
 	common_draw_background(board, true, true, true, { 0,0 });
@@ -326,7 +326,7 @@ bool cmp(std::pair<int, Movement> a, std::pair<int, Movement> b)
 {
 	return a.first > b.first;
 }
-std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int& Role)
+std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player)
 {
 	Chess T;
 	for (int i = 0; i < Chess_H; i++)
@@ -337,7 +337,12 @@ std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int&
 		int temp = Selector(T, Role, M[i]);
 		pair.push_back(std::make_pair(temp, M[i]));
 	}
-	sort(pair.begin(), pair.end(), [](std::pair<int, Movement> a, std::pair<int, Movement> b) {return a.first > b.first; });
+
+	if (Player==PlayerType::MaximizingPlayer)
+		sort(pair.begin(), pair.end(), [](std::pair<int, Movement> a, std::pair<int, Movement> b) {return a.first > b.first; });
+	else
+		sort(pair.begin(), pair.end(), [](std::pair<int, Movement> a, std::pair<int, Movement> b) {return a.first < b.first; });
+	
 	std::vector<Movement> result;
 	for (int i = 0; i < pair.size(); i++)
 		result.push_back(pair[i].second);
@@ -374,7 +379,7 @@ bool Expand_Move(std::vector<Movement>& Move, const int cur_x, const int cur_y, 
 		Move.push_back(V);
 		return false;
 	}
-	if (Is_Railway(cur_x, cur_y) && !Is_Railway(next_y, next_y) && distance > 1)
+	if (Is_Railway(cur_x, cur_y) && !Is_Railway(next_x, next_y) && distance > 1)
 		return false;
 	Move.push_back(V);
 	return true;
@@ -393,7 +398,7 @@ bool Cross_Move(std::vector<Movement>& Move, const int cur_x, const int cur_y, c
 	return true;
 }
 
-std::vector<Movement> Chess::Search_Movement(const int& Role)
+std::vector<Movement> Chess::Search_Movement(const int& Role, PlayerType Player)
 {
 	std::vector<Movement> Move;
 	Move.clear();
@@ -447,7 +452,7 @@ std::vector<Movement> Chess::Search_Movement(const int& Role)
 		}
 		//	std::cout <<"Move.size:"<< Move.size() << std::endl;
 	}
-	return Move;
+	return SelectMoveMent(Move, Role, Player);
 }
 
 
