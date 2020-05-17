@@ -98,7 +98,7 @@ function:
 //const char RANK[] = "AJSVTYLPGF";
 int Chess::Evaluater(const int x, const int y, const char ch)
 {
-	int value = 0;;
+	int value = 0;
 	//正常等级
 	if (ch == 'g' || ch == 'G')
 		value = 100;
@@ -372,6 +372,10 @@ void Chess::BFSSearch(int x, int y, std::vector<Coord>& Pos)
 bool Expand_Move(std::vector<Movement>& Move, const int cur_x, const int cur_y, const int next_x, const int next_y, const char next_ch, const int Role, const int distance)
 {
 	Movement V = Movement(Coord(cur_x, cur_y), Coord(next_x, next_y));
+	if (Is_Railway(cur_x, cur_y) && !Is_Railway(next_x, next_y) && distance > 1)
+		return false;
+	if (Is_Station(next_x, next_y) && Has_Chess(next_ch))
+		return false;
 	if (Is_Role_Chess(next_ch, Role))
 		return false;
 	if (Has_Chess(next_ch))
@@ -379,8 +383,6 @@ bool Expand_Move(std::vector<Movement>& Move, const int cur_x, const int cur_y, 
 		Move.push_back(V);
 		return false;
 	}
-	if (Is_Railway(cur_x, cur_y) && !Is_Railway(next_x, next_y) && distance > 1)
-		return false;
 	Move.push_back(V);
 	return true;
 }
@@ -405,7 +407,7 @@ std::vector<Movement> Chess::Search_Movement(const int& Role, PlayerType Player)
 
 	for (int i = 0; i < Chess_H; i++) {
 		for (int j = 0; j < Chess_W; j++) {
-			if (Is_Role_Chess(Board[i][j], Role) && chessMap.at(Board[i][j]) != chessClass::junqi)
+			if (Is_Role_Chess(Board[i][j], Role) && chessMap.at(Board[i][j]) != chessClass::junqi&& chessMap.at(Board[i][j]) != chessClass::dilei)
 			{
 				if (Is_GongBing(Board[i][j])) {
 					//只考虑在铁路上的情况，其他情况在下面会考虑到
@@ -460,13 +462,13 @@ std::vector<Movement> Chess::Search_Movement(const int& Role, PlayerType Player)
 
 
 //	返回棋盘相应位置的颜色
-inline int isColor(int linePos) {
-	if (linePos >= 0 && linePos < frontEndPos - 1)
-		return COLOR_BLUE;
-	else if (linePos == frontEndPos - 1)
+inline int isColor(int linePos, char ch) {
+	if (linePos == frontEndPos - 1)
 		return COLOR_BLACK;
-	else
+	if (ch >= 'a' && ch <= 'z')
 		return COLOR_RED;
+	else
+		return COLOR_BLUE;
 }
 
 //	画棋盘
@@ -526,7 +528,7 @@ inline void Display_Chess(std::vector<std::vector<char> >  Board, class Coord si
 
 	for (unsigned i = 0; i < Board.size(); i++) {
 		for (unsigned j = 0; j < Board[i].size(); j++) {
-			showch(2 * display + 2 + 2 * j * (border + 1), 2 + display + i * (border + 1), Board[i][j], COLOR_HWHITE, isColor(i));
+			showch(2 * display + 2 + 2 * j * (border + 1), 2 + display + i * (border + 1), Board[i][j], COLOR_HWHITE, isColor(i, Board[i][j]));
 		}
 		std::cout << std::endl;
 	}
