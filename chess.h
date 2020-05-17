@@ -66,7 +66,7 @@ public:
 
 const int frontEndPos = 7;	//	前线位置
 //	返回棋盘相应位置的颜色
-inline int isColor(int linePos);
+inline int isColor(int linePos,char ch);
 //	画棋盘
 inline void common_draw_background(const Coord sizeofall, bool border, bool solid, bool display, const Coord cursor);
 //	画棋子
