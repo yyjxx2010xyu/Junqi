@@ -59,6 +59,7 @@ output:
 	Opp_Role	交换执子方
 
 function:
+
 	返回交换执子状态
 */
 
@@ -98,18 +99,19 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 	}
 
 	Connect Con;
+
 	//	std::cout << "Depth" << Depth << "Alpha" << Alpha << "Beta" << Beta << std::endl;
 	//	极大化当前Eval的Player
 	if (Player == PlayerType::MaximizingPlayer)
 	{
 		int Max_Eval = -INF;
 		std::vector<Movement> Best_Move;
-		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role);
+		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role, Player);
 
 		for (std::vector<Movement>::iterator iter = Move.begin(); iter != Move.end(); iter++)
 		{
 			Movement V = *iter;
-		//	Con.Send_Move(V);测试用
+			//	Con.Send_Move(V);测试用
 			Chess Next_Board = Cur_Board.Apply_Move(V);
 			//std::cout << "Eval:" << (Next_Board.Evaluate_Chess(Role)) << std::endl;
 			Eval_Move Ret = _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role));
@@ -119,18 +121,17 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 
 			if (Depth == 4)
 			{
-				Connect Con;
-				Con.Send_Move(V);
-				std::cout << Eval << std::endl;;
+				std::cout << "Depth == 4 " << (char)('A' + 12 - V.From.x) << V.From.y << " " << (char)('A' + 12 - V.To.x) << V.To.y << " " << Eval << std::endl;;
+				//getchar(); getchar();
+				//Cur_Board.Display();
 			}
+
 
 			if (Eval > Max_Eval)
 			{
 				Max_Eval = Eval;
 				Best_Move = Move_His;
 				Best_Move.push_back(V);
-
-
 
 				Alpha = (Eval > Alpha) ? Eval : Alpha;
 				if (Beta <= Alpha)
@@ -144,18 +145,20 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 	{
 		int Min_Eval = INF;
 		std::vector<Movement> Best_Move;
-		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role);
+		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role,Player);
 
 		for (std::vector<Movement>::iterator iter = Move.begin(); iter != Move.end(); iter++)
 		{
 			Movement V = *iter;
-		//	Con.Send_Move(V);测试用
+			//	Con.Send_Move(V);测试用
 			Chess Next_Board = Cur_Board.Apply_Move(V);
 			Eval_Move Ret = _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MaximizingPlayer, Oppsite_Role(Cur_Role));
 
 			int Eval = Ret.first;
 			std::vector<Movement> Move_His = Ret.second;
-			
+
+
+
 			if (Eval < Min_Eval)
 			{
 				Min_Eval = Eval;
