@@ -24,7 +24,11 @@ Zobrist::Zobrist()
 			for (int k = 0; k < Chess_Type * 2 + 1; k++)
 				Zobrist_Table[i][j][k] = Rand_ULL();
 	Hash_Table = new int[Table_Size];
-	memset(Hash_Table, 0, sizeof(Hash_Table[0]) * Table_Size);
+	memset(Hash_Table, -1, sizeof(Hash_Table[0]) * Table_Size);
+	Hash_Depth = new int[Table_Size];
+	memset(Hash_Depth, -1, sizeof(Hash_Depth[0]) * Table_Size);
+	Hash_Bool = new bool[Table_Size];
+	memset(Hash_Bool, 0, sizeof(Hash_Bool[0]) * Table_Size);
 }
 
 Zobrist::~Zobrist()
@@ -45,20 +49,21 @@ ull Zobrist::Remove_Piece(ull Chess, int x, int y, char Piece) const
 }
 
 //	记录状态的Eval
-void Zobrist::Record_State(ull Chess, int Eval) const
+void Zobrist::Record_State(ull Chess, int Eval, int Depth) const
 {
-	/*
-#ifdef DEBUG
-	assert(Hash_Table[Chess % Table_Size] == 0);
-#endif // DEBUG
-	*/
-	Hash_Table[Chess % Table_Size] = Eval;
+	
+	Hash_Bool[Chess % Table_Size] = true;
+	if (Hash_Depth[Chess % Table_Size] < Depth)
+	{
+		Hash_Depth[Chess % Table_Size] = Depth;
+		Hash_Table[Chess % Table_Size] = Eval;
+	}
 }
 
 //	查询状态的Eval
-int Zobrist::Search_State(ull Chess) const
+int Zobrist::Search_State(ull Chess, int Depth) const
 {
-	if (Hash_Table[Chess % Table_Size] == 0)
+	if (Hash_Bool[Chess % Table_Size] == false || Hash_Depth[Chess % Table_Size] < Depth)
 		return -1;
 	return Hash_Table[Chess % Table_Size];
 }
@@ -77,14 +82,14 @@ ull Zobrist::Apply_Move(const Chess& C, const Movement& V, const ull& Zob) const
 
 	ull Ret = Zob;
 	int result = Rank_Judgement(C.Board[V.To.x][V.To.y], C.Board[V.From.x][V.From.y]);
-	if (result == SAME_RANK) 
+	if (result == SAME_RANK)
 	{
 		Ret = Remove_Piece(Zob, V.To.x, V.To.y, C.Board[V.To.x][V.To.y]);
 		Ret = Remove_Piece(Zob, V.From.x, V.From.y, C.Board[V.From.x][V.From.y]);
 		Ret = Add_Piece(Zob, V.To.x, V.To.y, BLANK);
 		Ret = Add_Piece(Zob, V.From.x, V.From.y, BLANK);
 	}
-	if (result == ABOVE) 
+	if (result == ABOVE)
 	{
 
 		Ret = Remove_Piece(Zob, V.From.x, V.From.y, C.Board[V.From.x][V.From.y]);

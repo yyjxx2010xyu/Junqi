@@ -96,9 +96,9 @@ function:
 Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_Role, const Zobrist& Zob, ull Cur_Zob)
 {
 	//	Zob.Search_State(Cur_Zob) != -1 means exist state
-	if (Zob.Search_State(Cur_Zob) != -1)
+	if (Zob.Search_State(Cur_Zob, Depth) != -1)
 	{
-		return std::make_pair(Zob.Search_State(Cur_Zob), std::vector<Movement>());
+		return std::make_pair(Zob.Search_State(Cur_Zob, Depth), std::vector<Movement>());
 	}
 	if (Depth == 0 || Cur_Board.Is_Over(Cur_Role))
 	{
@@ -124,7 +124,7 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 			int Eval = Ret.first;
 			std::vector<Movement> Move_His = Ret.second;
 
-			Zob.Record_State(Next_Zob, Eval);
+			Zob.Record_State(Next_Zob, Eval, Depth);
 			
 			if (Depth == SEARCH_DEPTH)
 			{
@@ -166,7 +166,7 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 
 			int Eval = Ret.first;
 			std::vector<Movement> Move_His = Ret.second;
-			Zob.Record_State(Next_Zob, Eval);
+			Zob.Record_State(Next_Zob, Eval, Depth);
 
 
 			if (Eval < Min_Eval)
