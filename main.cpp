@@ -2,6 +2,8 @@
 #include "connect.h"
 #include "game.h"
 #include "main.h"
+#include "chess.h"
+#include "zobrist.h"
 #include <windows.h>
 
 #ifdef DEBUG
@@ -53,18 +55,19 @@ int main(int argc, char* argv[])
 	*/
 
 	Chess Board;
+
 	int Status = Con.Get_Board(Board);
 	Board.init();
 	while (true)
 	{
 		Board.Display();
 #ifdef DEBUG
-		int i = (int)time(0);
+		int begin_time = (int)time(0);
 #endif // DEBUG
-		Movement Move = Junqi.Search(Board, 6);
+		Movement Move = Junqi.Search(Board, SEARCH_DEPTH);
 #ifdef DEBUG
-		int j = (int)time(0);
-		std::cout << "search time:" << j - i << std::endl;
+		int finish_time = (int)time(0);
+		std::cout << "search time:" << finish_time - begin_time << std::endl;
 		getchar();
 		getchar();
 #endif // DEBUG

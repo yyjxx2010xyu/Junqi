@@ -11,13 +11,16 @@
 #define DOWN 1
 static bool Upper_Role = DOWN;
 static bool Lower_Role = UP;
-const int Chess_board[2][13] = {
-	{0,0,0,0,0,0,0,1,1,2,2,3,3},
-	{3,3,2,2,1,1,0,0,0,0,0,0,0}
-};
+
 //	棋盘的大小
 static const int Chess_H = 13;
 static const int Chess_W = 5;
+static const int Chess_Type = 12;
+
+const int Chess_board[2][Chess_H] = {
+	{0,0,0,0,0,0,0,1,1,2,2,3,3},
+	{3,3,2,2,1,1,0,0,0,0,0,0,0}
+};
 
 class Movement;
 class Coord;
@@ -34,8 +37,13 @@ const char BLANK = ' ';
 #define ABOVE 1
 #define SAME_RANK 0
 
-const int SEARCH_WIDTH = 10;
+
 enum class PlayerType;
+
+
+//	用于标记在棋盘的上方还是下方,0为大本营在上方，1为大本营在下方
+//	用于比较大小
+int Rank_Judgement(char a, char b);
 
 /*
 存储方式就与Word中一样，上面用大写，下面用小写。
@@ -44,8 +52,6 @@ class Chess
 {
 private:
 	std::vector<std::vector<char> >  Board;
-	//用于标记在棋盘的上方还是下方,0为大本营在上方，1为大本营在下方
-	int Rank_Judgement(char a, char b);
 public:
 	Chess()
 	{
@@ -73,6 +79,7 @@ public:
 	void BFSSearch(int x, int y, std::vector<Coord>& Pos);
 	std::vector<Movement> SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player);
 	friend static int Selector(Chess chess, const int& Role, Movement M);
+	friend class Zobrist;
 };
 
 const int frontEndPos = 7;	//	前线位置
@@ -187,6 +194,33 @@ const std::map<char, chessClass> chessMap{
 };
 
 
+const std::map<char, int> chessNum{
+	{BLANK,0},
+	{'a',1},
+	{'A',2},
+	{'j',3},
+	{'J',4},
+	{'s',5},
+	{'S',6},
+	{'v',7},
+	{'V',8},
+	{'t',9},
+	{'T',10},
+	{'y',11},
+	{'Y',12},
+	{'l',13},
+	{'L',14},
+	{'p',15},
+	{'P',16},
+	{'g',17},
+	{'G',18},
+	{'d',19},
+	{'D',20},
+	{'z',21},
+	{'Z',22},
+	{'f',23},
+	{'F',24}
+};
 
 
 

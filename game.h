@@ -1,9 +1,10 @@
 #pragma once
 #include <vector>
 #include "chess.h"
+#include "zobrist.h"
 #define DEBUG
 /*
-State状态	
+State状态
 STATE_END	表示当前棋盘结束
 STATE_UPPER	当前执子方为上部，棋盘数据中的大写部分
 STATE_LOWER	当前执子方为下部，期盼数据中的小写部分
@@ -11,6 +12,12 @@ STATE_LOWER	当前执子方为下部，期盼数据中的小写部分
 const int STATUS_END = -1;
 const int STATUS_OK = 0;
 
+typedef unsigned long long ull;
+
+//	搜索宽度
+const int SEARCH_WIDTH = 15;
+//	搜索深度
+const int SEARCH_DEPTH = 10;
 /*
 Role	执棋方
 	Role == Role_UPPER	表示执棋方为大写，即上方
@@ -36,7 +43,7 @@ public:
 	Coord(int _x, int _y) :x(_x), y(_y) {}
 };
 
-/*	
+/*
 棋子的移动路径
 Coord From	表示棋子的起始位置
 Coord To	表示棋子的终点位置
@@ -68,15 +75,15 @@ Time_Limit	时间限制
 */
 
 class Chess;
-
+class Zobrist;
 class Game
 {
 protected:
 	int Role;
 	int Time_Limit;
 public:
-	void Arg_Init(int argc, char * argv[]);
+	void Arg_Init(int argc, char* argv[]);
 	Movement Search(Chess Board, int Depth = 4);
 private:
-	Eval_Move _Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_State);
+	Eval_Move _Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_State, const Zobrist& Zob, ull Cur_Zob);
 };

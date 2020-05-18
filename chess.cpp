@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cassert>
 #include "chess.h"
 #include "game.h"
 
@@ -29,7 +30,7 @@ function:
 	根据棋盘this->Board，判断当前执子方是否无棋可走
 */
 
-int Chess::Rank_Judgement(char a, char b)
+int Rank_Judgement(char a, char b)
 {
 	//新位置为空
 	if (a == BLANK)
@@ -378,6 +379,14 @@ static int Selector(Chess chess, const int& Role, Movement M)
 	return after - before;
 }
 
+static int Selector_Origin(Chess chess, const int& Role, Movement M)
+{
+	int before = chess.Evaluate_Chess(Role);
+	chess = chess.Apply_Move(M);
+	int after = chess.Evaluate_Chess(Role);
+	return after - before;
+}
+
 std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player)
 {
 	Chess T;
@@ -387,6 +396,9 @@ std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int&
 	std::vector<std::pair<int, Movement>> pair;
 	for (int i = 0; i < M.size(); i++) {
 		int temp = Selector(T, Role, M[i]);
+#ifdef DEBUG
+		//assert(temp == Selector_Origin(T, Role, M[i]));
+#endif
 		pair.push_back(std::make_pair(temp, M[i]));
 	}
 
