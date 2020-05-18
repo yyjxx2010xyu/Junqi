@@ -4,6 +4,7 @@
 #include "main.h"
 #include "chess.h"
 #include "zobrist.h"
+#include <ctime>
 #include <windows.h>
 
 #ifdef DEBUG
@@ -53,7 +54,7 @@ int main(int argc, char* argv[])
 
 	}
 	*/
-
+	srand(time(NULL));
 	Chess Board;
 
 	int Status = Con.Get_Board(Board);

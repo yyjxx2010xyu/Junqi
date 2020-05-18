@@ -5,6 +5,7 @@
 #include "connect.h"
 #include "zobrist.h"
 
+#define ENABLE_ZOB
 const int ROLE_UPPER = 1;
 const int ROLE_LOWER = 0;
 const int ROLE_BLANK = -1;
@@ -96,10 +97,13 @@ function:
 Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_Role, const Zobrist& Zob, ull Cur_Zob)
 {
 	//	Zob.Search_State(Cur_Zob) != -1 means exist state
-	if (Zob.Search_State(Cur_Zob, Depth) != -1)
+#ifdef ENABLE_ZOB
+	if (Zob.Search_State(Cur_Zob, Depth) != -1 && (Depth % 2 == 0))
 	{
 		return std::make_pair(Zob.Search_State(Cur_Zob, Depth), std::vector<Movement>());
 	}
+#endif
+
 	if (Depth == 0 || Cur_Board.Is_Over(Cur_Role))
 	{
 		//	Eval函数始终返回的机器执子方的最优解
@@ -119,13 +123,14 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 			//	Con.Send_Move(V);测试用
 			Chess Next_Board = Cur_Board.Apply_Move(V);
 			ull Next_Zob = Zob.Apply_Move(Cur_Board, V, Cur_Zob);
-			Eval_Move Ret = _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role), Zob, Next_Zob);
+
+			Eval_Move Ret= _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role), Zob, Next_Zob);
 
 			int Eval = Ret.first;
 			std::vector<Movement> Move_His = Ret.second;
 
 			Zob.Record_State(Next_Zob, Eval, Depth);
-			
+
 			if (Depth == SEARCH_DEPTH)
 			{
 #ifdef DEBUG
@@ -141,6 +146,7 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 				Max_Eval = Eval;
 				Best_Move = Move_His;
 				Best_Move.push_back(V);
+
 
 				Alpha = (Eval > Alpha) ? Eval : Alpha;
 				if (Beta <= Alpha)
@@ -162,11 +168,12 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 			//	Con.Send_Move(V);测试用
 			Chess Next_Board = Cur_Board.Apply_Move(V);
 			ull Next_Zob = Zob.Apply_Move(Cur_Board, V, Cur_Zob);
-			Eval_Move Ret = _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MaximizingPlayer, Oppsite_Role(Cur_Role), Zob, Next_Zob);
+
+			Eval_Move Ret= _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MaximizingPlayer, Oppsite_Role(Cur_Role), Zob, Next_Zob);
 
 			int Eval = Ret.first;
 			std::vector<Movement> Move_His = Ret.second;
-			Zob.Record_State(Next_Zob, Eval, Depth);
+			//Zob.Record_State(Next_Zob, Eval, Depth);
 
 
 			if (Eval < Min_Eval)

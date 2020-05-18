@@ -470,6 +470,7 @@ std::vector<Movement> Chess::Search_Movement(const int& Role, PlayerType Player)
 		for (int j = 0; j < Chess_W; j++) {
 			if (Is_Role_Chess(Board[i][j], Role) && chessMap.at(Board[i][j]) != chessClass::junqi&& chessMap.at(Board[i][j]) != chessClass::dilei)
 			{
+				/*
 				if (Is_GongBing(Board[i][j])) {
 					//只考虑在铁路上的情况，其他情况在下面会考虑到
 					if (Is_Railway(i, j)) {
@@ -487,7 +488,7 @@ std::vector<Movement> Chess::Search_Movement(const int& Role, PlayerType Player)
 					}
 				}
 
-
+				*/
 				//	上下左右方向，铁路上自动扩展
 				for (int k = 0; k < 4; k++)
 					for (int d = 1; d <= Chess_H; d++)

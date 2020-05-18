@@ -53,7 +53,7 @@ void Zobrist::Record_State(ull Chess, int Eval, int Depth) const
 {
 	
 	Hash_Bool[Chess % Table_Size] = true;
-	if (Hash_Depth[Chess % Table_Size] < Depth)
+	if (Hash_Depth[Chess % Table_Size] <= Depth)
 	{
 		Hash_Depth[Chess % Table_Size] = Depth;
 		Hash_Table[Chess % Table_Size] = Eval;
@@ -95,7 +95,8 @@ ull Zobrist::Apply_Move(const Chess& C, const Movement& V, const ull& Zob) const
 		Ret = Remove_Piece(Zob, V.From.x, V.From.y, C.Board[V.From.x][V.From.y]);
 		Ret = Add_Piece(Zob, V.From.x, V.From.y, BLANK);
 	}
-	else {
+	if (result == UNDER)
+	{
 		Ret = Remove_Piece(Zob, V.To.x, V.To.y, C.Board[V.To.x][V.To.y]);
 		Ret = Remove_Piece(Zob, V.From.x, V.From.y, C.Board[V.From.x][V.From.y]);
 		Ret = Add_Piece(Zob, V.To.x, V.To.y, C.Board[V.From.x][V.From.y]);
