@@ -2,6 +2,19 @@
 #include "chess.h"
 #include "game.h"
 
+void Chess::init()
+{
+	if (Board[0][1] == 'f' || Board[0][3] == 'f') {
+		Lower_Role = UP;
+		Upper_Role = DOWN;
+	}
+	else {
+		Lower_Role = DOWN;
+		Upper_Role = UP;
+	}
+
+}
+
 /*
 input:
 Role	执棋方
@@ -54,12 +67,27 @@ int Chess::Rank_Judgement(char a, char b)
 bool Chess::Is_Over(const int& Role)
 {
 	//只考虑了双方大本营内的军旗有没有被吃
-	if (Role == ROLE_LOWER)
-		if (Board[0][1] != 'f' && Board[0][3] != 'f')
-			return true;
-	if (Role == ROLE_UPPER)
-		if (Board[12][1] != 'F' && Board[12][3] != 'F')
-			return true;
+	if (Role == ROLE_LOWER) {
+		if (Lower_Role == UP) {
+			if (Board[0][1] != 'f' && Board[0][3] != 'f')
+				return true;
+		}
+		else {
+			if (Board[12][1] != 'f' && Board[12][3] != 'f')
+				return true;
+		}
+	}
+			
+	if (Role == ROLE_UPPER) {
+		if (Upper_Role == UP) {
+			if (Board[0][1] != 'F' && Board[0][3] != 'F')
+				return true;
+		}
+		else {
+			if (Board[12][1] != 'F' && Board[12][3] != 'F')
+				return true;
+		}
+	}
 
 	//找到棋盘内可移动的棋子
 	char ch0 = 'A';
@@ -124,16 +152,25 @@ int Chess::Evaluater(const int x, const int y, const char ch)
 	else if (ch == 'a' || ch == 'A')//X8
 		value = 12800;
 	else if (ch == 'f' || ch == 'F')//X8
-		value = 51200;
+		value = 102400;
 	else if (ch == 'z' || ch == 'Z')
 		value = 800;//希望炸弹至少消灭团长，或者团长以下的单位可主动消灭炸弹
 	else if (ch == 'd' || ch == 'D')
-		value = 400;//地雷不视为威胁，营长或营长以下都可主动牺牲
+		value = 2400;//地雷不视为威胁，营长或营长以下都可主动牺牲
+	else if (ch == BLANK)
+		value = 0;
+	int temp;
+	//增加对方棋盘权重
+	if (ch >= 'A' && ch <= 'Z') {
+		temp = Chess_board[Upper_Role][x];
+	}
+	else {
+		temp = Chess_board[Lower_Role][x];
+	}
+	
 
 	//加入行营所占的权重，希望尽可能占领多的行营
-
-
-	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.002 * (double)Railway[x][y]) * (double)value);
+	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.001 * (double)Railway[x][y]+0.003*(double)temp) * (double)value);
 }
 
 int Chess::Evaluate_Chess(const int& Role)
@@ -322,9 +359,22 @@ function:
 
 static int Selector(Chess chess, const int& Role, Movement M)
 {
-	int before = chess.Evaluate_Chess(Role);
-	chess = chess.Apply_Move(M);
-	int after = chess.Evaluate_Chess(Role);
+	int after;
+	int before;
+	if (Has_Chess(chess.Board[M.To.x][M.To.y])) {
+		before = chess.Evaluater(M.From.x, M.From.y, chess.Board[M.From.x][M.From.y]) - chess.Evaluater(M.To.x, M.To.y, chess.Board[M.To.x][M.To.y]);
+		chess = chess.Apply_Move(M);
+		if (Is_Role_Chess(chess.Board[M.To.x][M.To.y], Role))
+			after = chess.Evaluater(M.To.x, M.To.y, chess.Board[M.To.x][M.To.y]);
+		else
+			after = 0 - chess.Evaluater(M.To.x, M.To.y, chess.Board[M.To.x][M.To.y]);
+	}		
+	else {
+		before = chess.Evaluater(M.From.x, M.From.y, chess.Board[M.From.x][M.From.y]);
+		//少调用一次apply_move
+		after = chess.Evaluater(M.To.x, M.To.y, chess.Board[M.From.x][M.From.y]);
+	}
+	
 	return after - before;
 }
 

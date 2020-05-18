@@ -4,6 +4,10 @@
 #include "main.h"
 #include <windows.h>
 
+#ifdef DEBUG
+#include <time.h>
+#endif // DEBUG 在game.h里定义
+
 /*
  例如: Junqi.exe –-role 1 –-time 60
 	注：  参数role：	0表示红方、1表示黑方。
@@ -50,17 +54,24 @@ int main(int argc, char* argv[])
 
 	Chess Board;
 	int Status = Con.Get_Board(Board);
+	Board.init();
 	while (true)
 	{
 		Board.Display();
+#ifdef DEBUG
+		int i = (int)time(0);
+#endif // DEBUG
 		Movement Move = Junqi.Search(Board, 6);
+#ifdef DEBUG
+		int j = (int)time(0);
+		std::cout << "search time:" << j - i << std::endl;
 		getchar();
 		getchar();
+#endif // DEBUG
 		Board = Board.Apply_Move(Move);
 		Board.Display();
 		Con.Send_Move(Move);
 		Move = Human_Input();
-
 		Board= Board.Apply_Move(Move);
 		Sleep(2000);
 

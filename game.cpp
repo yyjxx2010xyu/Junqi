@@ -97,9 +97,6 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 		//	Eval函数始终返回的机器执子方的最优解
 		return std::make_pair(Cur_Board.Evaluate_Chess(this->Role), std::vector<Movement>());
 	}
-
-	Connect Con;
-
 	//	std::cout << "Depth" << Depth << "Alpha" << Alpha << "Beta" << Beta << std::endl;
 	//	极大化当前Eval的Player
 	if (Player == PlayerType::MaximizingPlayer)
@@ -121,9 +118,11 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 
 			if (Depth == 6)
 			{
-				std::cout << "Depth == 6 " << (char)('A' + 12 - V.From.x) << V.From.y << " " << (char)('A' + 12 - V.To.x) << V.To.y << " " << Eval << " " <<  Next_Board.Evaluate_Chess(Cur_Role) << std::endl;;
+#ifdef DEBUG
+				std::cout << "Depth == 6 " << (char)('A' + 12 - V.From.x) << V.From.y << " " << (char)('A' + 12 - V.To.x) << V.To.y << " " << Eval << " " << Next_Board.Evaluate_Chess(Cur_Role) << std::endl;;
 				//getchar(); getchar();
 				//Cur_Board.Display();
+#endif // DEBUG
 			}
 
 

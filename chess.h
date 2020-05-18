@@ -6,7 +6,15 @@
 #include "game.h"
 #include "connect.h"
 #include "cmd_console_tools.h"
-
+//用于棋盘权重，执棋方在棋盘上方为UP，在下方为DOWN
+#define UP 0
+#define DOWN 1
+static bool Upper_Role = DOWN;
+static bool Lower_Role = UP;
+const int Chess_board[2][13] = {
+	{0,0,0,0,0,0,0,1,1,2,2,3,3},
+	{3,3,2,2,1,1,0,0,0,0,0,0,0}
+};
 //	棋盘的大小
 static const int Chess_H = 13;
 static const int Chess_W = 5;
@@ -36,6 +44,7 @@ class Chess
 {
 private:
 	std::vector<std::vector<char> >  Board;
+	//用于标记在棋盘的上方还是下方,0为大本营在上方，1为大本营在下方
 	int Rank_Judgement(char a, char b);
 public:
 	Chess()
@@ -52,6 +61,7 @@ public:
 			Board[i] = board_data[i];
 		}
 	}
+	void init();//初始化棋盘位置，确认大小写在棋盘的位置
 	bool Is_Over(const int& Role);
 	int Evaluate_Chess(const int& Role);
 	int Evaluater(const int x, const int y, const char ch);
@@ -62,6 +72,7 @@ public:
 	void Set_Board(int x, int y, int ch);
 	void BFSSearch(int x, int y, std::vector<Coord>& Pos);
 	std::vector<Movement> SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player);
+	friend static int Selector(Chess chess, const int& Role, Movement M);
 };
 
 const int frontEndPos = 7;	//	前线位置

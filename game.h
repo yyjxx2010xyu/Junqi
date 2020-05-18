@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "chess.h"
-
+#define DEBUG
 /*
 State状态	
 STATE_END	表示当前棋盘结束
