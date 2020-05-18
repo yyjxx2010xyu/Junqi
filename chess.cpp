@@ -54,8 +54,13 @@ int Chess::Rank_Judgement(char a, char b)
 bool Chess::Is_Over(const int& Role)
 {
 	//只考虑了双方大本营内的军旗有没有被吃
-	if ((Board[0][1] == 'F' || Board[0][3] == 'F') && (Board[12][1] == 'f' || Board[12][3] == 'f'))
-		return false;
+	if (Role == ROLE_LOWER)
+		if (Board[0][1] != 'f' && Board[0][3] != 'f')
+			return true;
+	if (Role == ROLE_UPPER)
+		if (Board[12][1] != 'F' && Board[12][3] != 'F')
+			return true;
+
 	//找到棋盘内可移动的棋子
 	char ch0 = 'A';
 	char ch1 = 'Z';
@@ -315,17 +320,14 @@ function:
 	寻找搜索方向，有着充分的想象空间
 */
 
-int Chess::Selector(Chess chess, const int& Role, Movement M)
+static int Selector(Chess chess, const int& Role, Movement M)
 {
-	int before = Evaluate_Chess(Role);
-	chess.Apply_Move(M);
-	int after = Evaluate_Chess(Role);
+	int before = chess.Evaluate_Chess(Role);
+	chess = chess.Apply_Move(M);
+	int after = chess.Evaluate_Chess(Role);
 	return after - before;
 }
-bool cmp(std::pair<int, Movement> a, std::pair<int, Movement> b)
-{
-	return a.first > b.first;
-}
+
 std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player)
 {
 	Chess T;
@@ -338,13 +340,10 @@ std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int&
 		pair.push_back(std::make_pair(temp, M[i]));
 	}
 
-	if (Player==PlayerType::MaximizingPlayer)
-		sort(pair.begin(), pair.end(), [](std::pair<int, Movement> a, std::pair<int, Movement> b) {return a.first > b.first; });
-	else
-		sort(pair.begin(), pair.end(), [](std::pair<int, Movement> a, std::pair<int, Movement> b) {return a.first < b.first; });
-	
+	sort(pair.begin(), pair.end(), [](std::pair<int, Movement> a, std::pair<int, Movement> b) {return a.first > b.first; });
+
 	std::vector<Movement> result;
-	for (int i = 0; i < pair.size(); i++)
+	for (int i = 0; i < pair.size() && i < SEARCH_WIDTH; i++)
 		result.push_back(pair[i].second);
 	return result;
 }

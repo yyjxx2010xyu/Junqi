@@ -26,6 +26,7 @@ const char BLANK = ' ';
 #define ABOVE 1
 #define SAME_RANK 0
 
+const int SEARCH_WIDTH = 10;
 enum class PlayerType;
 
 /*
@@ -60,7 +61,6 @@ public:
 	bool Is_Movable(Movement M);
 	void Set_Board(int x, int y, int ch);
 	void BFSSearch(int x, int y, std::vector<Coord>& Pos);
-	int Selector(Chess chess, const int& Role, Movement M);
 	std::vector<Movement> SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player);
 };
 

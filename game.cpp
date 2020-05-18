@@ -119,9 +119,9 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 			int Eval = Ret.first;
 			std::vector<Movement> Move_His = Ret.second;
 
-			if (Depth == 4)
+			if (Depth == 6)
 			{
-				std::cout << "Depth == 4 " << (char)('A' + 12 - V.From.x) << V.From.y << " " << (char)('A' + 12 - V.To.x) << V.To.y << " " << Eval << std::endl;;
+				std::cout << "Depth == 6 " << (char)('A' + 12 - V.From.x) << V.From.y << " " << (char)('A' + 12 - V.To.x) << V.To.y << " " << Eval << " " <<  Next_Board.Evaluate_Chess(Cur_Role) << std::endl;;
 				//getchar(); getchar();
 				//Cur_Board.Display();
 			}

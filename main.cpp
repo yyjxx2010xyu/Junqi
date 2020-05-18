@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 	while (true)
 	{
 		Board.Display();
-		Movement Move = Junqi.Search(Board);
+		Movement Move = Junqi.Search(Board, 6);
 		getchar();
 		getchar();
 		Board = Board.Apply_Move(Move);
