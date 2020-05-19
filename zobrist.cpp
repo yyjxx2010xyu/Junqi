@@ -29,11 +29,19 @@ Zobrist::Zobrist()
 	memset(Hash_Depth, -1, sizeof(Hash_Depth[0]) * Table_Size);
 	Hash_Bool = new bool[Table_Size];
 	memset(Hash_Bool, 0, sizeof(Hash_Bool[0]) * Table_Size);
+	Hash_Alpha = new int[Table_Size];
+	memset(Hash_Alpha, 0, sizeof(Hash_Alpha[0]) * Table_Size);
+	Hash_Beta = new int[Table_Size];
+	memset(Hash_Beta, 0, sizeof(Hash_Beta[0]) * Table_Size);
 }
 
 Zobrist::~Zobrist()
 {
 	delete[] Hash_Table;
+	delete[] Hash_Depth;
+	delete[] Hash_Bool;
+	delete[] Hash_Alpha;
+	delete[] Hash_Beta;
 }
 
 //	表中的一个位置添加一个棋子
@@ -49,23 +57,25 @@ ull Zobrist::Remove_Piece(ull Chess, int x, int y, char Piece) const
 }
 
 //	记录状态的Eval
-void Zobrist::Record_State(ull Chess, int Eval, int Depth) const
+void Zobrist::Record_State(ull Chess, int Eval, int Depth, int Alpha, int Beta) const
 {
-	
+
 	Hash_Bool[Chess % Table_Size] = true;
 	if (Hash_Depth[Chess % Table_Size] <= Depth)
 	{
 		Hash_Depth[Chess % Table_Size] = Depth;
 		Hash_Table[Chess % Table_Size] = Eval;
+		Hash_Alpha[Chess % Table_Size] = Alpha;
+		Hash_Beta[Chess % Table_Size] = Beta;
 	}
 }
 
 //	查询状态的Eval
-int Zobrist::Search_State(ull Chess, int Depth) const
+std::pair<int, std::pair<int, int> >  Zobrist::Search_State(ull Chess, int Depth) const
 {
 	if (Hash_Bool[Chess % Table_Size] == false || Hash_Depth[Chess % Table_Size] < Depth)
-		return -1;
-	return Hash_Table[Chess % Table_Size];
+		return std::make_pair(-1, std::make_pair(0, 0));
+	return std::make_pair(Hash_Table[Chess % Table_Size], std::make_pair(Hash_Alpha[Chess % Table_Size], Hash_Beta[Chess % Table_Size])); ;
 }
 
 ull Zobrist::Evaluate_Chess(Chess C) const
@@ -104,6 +114,13 @@ ull Zobrist::Apply_Move(const Chess& C, const Movement& V, const ull& Zob) const
 	}
 
 	return Ret;
+}
+
+bool Zobrist::Same_Role(ull Chess, int Depth) const
+{
+	if ((Depth ^ Hash_Depth[Chess % Table_Size]) & 1)
+		return false;
+	return true;
 }
 
 

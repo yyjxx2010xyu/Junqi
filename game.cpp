@@ -5,7 +5,7 @@
 #include "connect.h"
 #include "zobrist.h"
 
-#define ENABLE_ZOB
+//	#define ENABLE_ZOB
 const int ROLE_UPPER = 1;
 const int ROLE_LOWER = 0;
 const int ROLE_BLANK = -1;
@@ -96,19 +96,24 @@ function:
 */
 Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_Role, const Zobrist& Zob, ull Cur_Zob)
 {
-	//	Zob.Search_State(Cur_Zob) != -1 means exist state
-#ifdef ENABLE_ZOB
-	if (Zob.Search_State(Cur_Zob, Depth) != -1 && (Depth % 2 == 0))
-	{
-		return std::make_pair(Zob.Search_State(Cur_Zob, Depth), std::vector<Movement>());
-	}
-#endif
 
 	if (Depth == 0 || Cur_Board.Is_Over(Cur_Role))
 	{
 		//	Eval函数始终返回的机器执子方的最优解
 		return std::make_pair(Cur_Board.Evaluate_Chess(this->Role), std::vector<Movement>());
 	}
+
+	/*
+		//	Zob.Search_State(Cur_Zob) != -1 means exist state
+	#ifdef ENABLE_ZOB
+		if (Zob.Search_State(Cur_Zob, Depth) != -1 && Zob.Same_Role(Cur_Zob, Depth))
+		{
+			//if (Depth == 6)
+			//	std::cout << "Using Zobist" << " " << "Depth = " << Depth << std::endl;
+			return std::make_pair(Zob.Search_State(Cur_Zob, Depth), std::vector<Movement>());
+		}
+	#endif
+	*/
 	//	std::cout << "Depth" << Depth << "Alpha" << Alpha << "Beta" << Beta << std::endl;
 	//	极大化当前Eval的Player
 	if (Player == PlayerType::MaximizingPlayer)
@@ -123,13 +128,33 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 			//	Con.Send_Move(V);测试用
 			Chess Next_Board = Cur_Board.Apply_Move(V);
 			ull Next_Zob = Zob.Apply_Move(Cur_Board, V, Cur_Zob);
+			Eval_Move Ret;
 
-			Eval_Move Ret= _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role), Zob, Next_Zob);
+			std::pair<int, std::pair<int, int> >Ret_Zob = Zob.Search_State(Next_Zob, Depth);
+#ifdef	ENABLE_ZOB
+			if (Ret_Zob.first != -1 && Zob.Same_Role(Next_Zob, Depth))
+			{
+				//	std::cout << "Expand " << "Depth = " << Depth << std::endl;
+				Ret.first = Ret_Zob.first;
+				Ret.second = std::vector<Movement>();
+				Eval_Move Left_Ret, Right_Ret;
+				if (Alpha < Ret_Zob.second.first)
+					Left_Ret = _Search(Next_Board, Depth - 1, Alpha, Ret_Zob.second.first - 1, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role), Zob, Next_Zob);
+				if (Beta > Ret_Zob.second.second)
+					Right_Ret = _Search(Next_Board, Depth - 1, Ret_Zob.second.second + 1, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role), Zob, Next_Zob);
+				if (Left_Ret.first > Ret.first)
+					Ret = Left_Ret;
+				if (Right_Ret.first > Ret.first)
+					Ret = Right_Ret;
+			}
+			else
+#endif
+				Ret = _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role), Zob, Next_Zob);
 
 			int Eval = Ret.first;
 			std::vector<Movement> Move_His = Ret.second;
 
-			Zob.Record_State(Next_Zob, Eval, Depth);
+			Zob.Record_State(Next_Zob, Eval, Depth, Alpha, Beta);
 
 			if (Depth == SEARCH_DEPTH)
 			{
@@ -149,7 +174,7 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 
 
 				Alpha = (Eval > Alpha) ? Eval : Alpha;
-				if (Beta <= Alpha)
+				if (Beta < Alpha)
 					break;
 			}
 		}
@@ -169,11 +194,14 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 			Chess Next_Board = Cur_Board.Apply_Move(V);
 			ull Next_Zob = Zob.Apply_Move(Cur_Board, V, Cur_Zob);
 
-			Eval_Move Ret= _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MaximizingPlayer, Oppsite_Role(Cur_Role), Zob, Next_Zob);
+
+
+			Eval_Move Ret = _Search(Next_Board, Depth - 1, Alpha, Beta, PlayerType::MaximizingPlayer, Oppsite_Role(Cur_Role), Zob, Next_Zob);
 
 			int Eval = Ret.first;
 			std::vector<Movement> Move_His = Ret.second;
-			//Zob.Record_State(Next_Zob, Eval, Depth);
+			//	实际上应该在这里做记录就是是说，一个来回。
+			Zob.Record_State(Next_Zob, Eval, Depth, Alpha, Beta);
 
 
 			if (Eval < Min_Eval)
@@ -183,7 +211,7 @@ Eval_Move Game::_Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerT
 				Best_Move.push_back(V);
 
 				Beta = (Eval < Beta) ? Eval : Beta;
-				if (Beta <= Alpha)
+				if (Beta < Alpha)
 					break;
 			}
 		}
