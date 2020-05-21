@@ -379,6 +379,15 @@ static int Selector(Chess chess, const int& Role, Movement M)
 	return after - before;
 }
 
+bool operator==(const Chess& A, const Chess& B)
+{
+	for (int i = 0; i < Chess_H; i++)
+		for (int j = 0; j < Chess_W; j++)
+			if (A.Board[i][j] != B.Board[i][j])
+				return false;
+	return true;
+}
+
 static int Selector_Origin(Chess chess, const int& Role, Movement M)
 {
 	int before = chess.Evaluate_Chess(Role);

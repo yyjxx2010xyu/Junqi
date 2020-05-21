@@ -4,7 +4,7 @@
 #include "chess.h"
 #include "game.h"
 
-
+class Chess;
 //	生成unsigned long long 大小的随机数
 static ull Rand_ULL()
 {
@@ -33,6 +33,8 @@ Zobrist::Zobrist()
 	memset(Hash_Alpha, 0, sizeof(Hash_Alpha[0]) * Table_Size);
 	Hash_Beta = new int[Table_Size];
 	memset(Hash_Beta, 0, sizeof(Hash_Beta[0]) * Table_Size);
+	
+	Hash_Chess = new Chess[Table_Size];
 }
 
 Zobrist::~Zobrist()
@@ -42,6 +44,8 @@ Zobrist::~Zobrist()
 	delete[] Hash_Bool;
 	delete[] Hash_Alpha;
 	delete[] Hash_Beta;
+
+	delete[] Hash_Chess;
 }
 
 //	表中的一个位置添加一个棋子
@@ -57,16 +61,17 @@ ull Zobrist::Remove_Piece(ull Chess, int x, int y, char Piece) const
 }
 
 //	记录状态的Eval
-void Zobrist::Record_State(ull Chess, int Eval, int Depth, int Alpha, int Beta) const
+void Zobrist::Record_State(ull Zob_Num, int Eval, int Depth, int Alpha, int Beta, Chess C) const
 {
 
-	Hash_Bool[Chess % Table_Size] = true;
-	if (Hash_Depth[Chess % Table_Size] <= Depth)
+	Hash_Bool[Zob_Num % Table_Size] = true;
+	if (Hash_Depth[Zob_Num % Table_Size] <= Depth)
 	{
-		Hash_Depth[Chess % Table_Size] = Depth;
-		Hash_Table[Chess % Table_Size] = Eval;
-		Hash_Alpha[Chess % Table_Size] = Alpha;
-		Hash_Beta[Chess % Table_Size] = Beta;
+		Hash_Depth[Zob_Num % Table_Size] = Depth;
+		Hash_Table[Zob_Num % Table_Size] = Eval;
+		Hash_Alpha[Zob_Num % Table_Size] = Alpha;
+		Hash_Beta[Zob_Num % Table_Size] = Beta;
+		Hash_Chess[Zob_Num % Table_Size] = C;
 	}
 }
 
@@ -77,6 +82,7 @@ std::pair<int, std::pair<int, int> >  Zobrist::Search_State(ull Chess, int Depth
 		return std::make_pair(-1, std::make_pair(0, 0));
 	return std::make_pair(Hash_Table[Chess % Table_Size], std::make_pair(Hash_Alpha[Chess % Table_Size], Hash_Beta[Chess % Table_Size])); ;
 }
+
 
 ull Zobrist::Evaluate_Chess(Chess C) const
 {
@@ -94,23 +100,23 @@ ull Zobrist::Apply_Move(const Chess& C, const Movement& V, const ull& Zob) const
 	int result = Rank_Judgement(C.Board[V.To.x][V.To.y], C.Board[V.From.x][V.From.y]);
 	if (result == SAME_RANK)
 	{
-		Ret = Remove_Piece(Zob, V.To.x, V.To.y, C.Board[V.To.x][V.To.y]);
-		Ret = Remove_Piece(Zob, V.From.x, V.From.y, C.Board[V.From.x][V.From.y]);
-		Ret = Add_Piece(Zob, V.To.x, V.To.y, BLANK);
-		Ret = Add_Piece(Zob, V.From.x, V.From.y, BLANK);
+		Ret = Remove_Piece(Ret, V.To.x, V.To.y, C.Board[V.To.x][V.To.y]);
+		Ret = Remove_Piece(Ret, V.From.x, V.From.y, C.Board[V.From.x][V.From.y]);
+		Ret = Add_Piece(Ret, V.To.x, V.To.y, BLANK);
+		Ret = Add_Piece(Ret, V.From.x, V.From.y, BLANK);
 	}
 	if (result == ABOVE)
 	{
 
-		Ret = Remove_Piece(Zob, V.From.x, V.From.y, C.Board[V.From.x][V.From.y]);
-		Ret = Add_Piece(Zob, V.From.x, V.From.y, BLANK);
+		Ret = Remove_Piece(Ret, V.From.x, V.From.y, C.Board[V.From.x][V.From.y]);
+		Ret = Add_Piece(Ret, V.From.x, V.From.y, BLANK);
 	}
 	if (result == UNDER)
 	{
-		Ret = Remove_Piece(Zob, V.To.x, V.To.y, C.Board[V.To.x][V.To.y]);
-		Ret = Remove_Piece(Zob, V.From.x, V.From.y, C.Board[V.From.x][V.From.y]);
-		Ret = Add_Piece(Zob, V.To.x, V.To.y, C.Board[V.From.x][V.From.y]);
-		Ret = Add_Piece(Zob, V.From.x, V.From.y, BLANK);
+		Ret = Remove_Piece(Ret, V.To.x, V.To.y, C.Board[V.To.x][V.To.y]);
+		Ret = Remove_Piece(Ret, V.From.x, V.From.y, C.Board[V.From.x][V.From.y]);
+		Ret = Add_Piece(Ret, V.To.x, V.To.y, C.Board[V.From.x][V.From.y]);
+		Ret = Add_Piece(Ret, V.From.x, V.From.y, BLANK);
 	}
 
 	return Ret;
@@ -121,6 +127,16 @@ bool Zobrist::Same_Role(ull Chess, int Depth) const
 	if ((Depth ^ Hash_Depth[Chess % Table_Size]) & 1)
 		return false;
 	return true;
+}
+
+int Zobrist::Get_Depth(ull Chess) const
+{
+	return Hash_Depth[Chess % Table_Size];
+}
+
+Chess Zobrist::Get_Chess(ull Zob_Num) const
+{
+	return Hash_Chess[Zob_Num % Table_Size];
 }
 
 

@@ -62,16 +62,9 @@ int main(int argc, char* argv[])
 	while (true)
 	{
 		Board.Display();
-#ifdef DEBUG
-		int begin_time = (int)time(0);
-#endif // DEBUG
+
 		Movement Move = Junqi.Search(Board, SEARCH_DEPTH);
-#ifdef DEBUG
-		int finish_time = (int)time(0);
-		std::cout << "search time:" << finish_time - begin_time << std::endl;
-		getchar();
-		getchar();
-#endif // DEBUG
+
 		Board = Board.Apply_Move(Move);
 		Board.Display();
 		Con.Send_Move(Move);

@@ -67,6 +67,7 @@ public:
 			Board[i] = board_data[i];
 		}
 	}
+	
 	void init();//初始化棋盘位置，确认大小写在棋盘的位置
 	bool Is_Over(const int& Role);
 	int Evaluate_Chess(const int& Role);
@@ -80,6 +81,8 @@ public:
 	std::vector<Movement> SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player);
 	friend static int Selector(Chess chess, const int& Role, Movement M);
 	friend class Zobrist;
+
+	friend bool operator == (const Chess& A, const Chess& B);
 };
 
 const int frontEndPos = 7;	//	前线位置
