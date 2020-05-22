@@ -27,25 +27,12 @@ Zobrist::Zobrist()
 	memset(Hash_Table, -1, sizeof(Hash_Table[0]) * Table_Size);
 	Hash_Depth = new int[Table_Size];
 	memset(Hash_Depth, -1, sizeof(Hash_Depth[0]) * Table_Size);
-	Hash_Bool = new bool[Table_Size];
-	memset(Hash_Bool, 0, sizeof(Hash_Bool[0]) * Table_Size);
-	Hash_Alpha = new int[Table_Size];
-	memset(Hash_Alpha, 0, sizeof(Hash_Alpha[0]) * Table_Size);
-	Hash_Beta = new int[Table_Size];
-	memset(Hash_Beta, 0, sizeof(Hash_Beta[0]) * Table_Size);
-	
-	Hash_Chess = new Chess[Table_Size];
 }
 
 Zobrist::~Zobrist()
 {
 	delete[] Hash_Table;
 	delete[] Hash_Depth;
-	delete[] Hash_Bool;
-	delete[] Hash_Alpha;
-	delete[] Hash_Beta;
-
-	delete[] Hash_Chess;
 }
 
 //	表中的一个位置添加一个棋子
@@ -61,26 +48,21 @@ ull Zobrist::Remove_Piece(ull Chess, int x, int y, char Piece) const
 }
 
 //	记录状态的Eval
-void Zobrist::Record_State(ull Zob_Num, int Eval, int Depth, int Alpha, int Beta, Chess C) const
+void Zobrist::Record_State(ull Zob_Num, int Eval, int Depth) const
 {
-
-	Hash_Bool[Zob_Num % Table_Size] = true;
 	if (Hash_Depth[Zob_Num % Table_Size] <= Depth)
 	{
 		Hash_Depth[Zob_Num % Table_Size] = Depth;
 		Hash_Table[Zob_Num % Table_Size] = Eval;
-		Hash_Alpha[Zob_Num % Table_Size] = Alpha;
-		Hash_Beta[Zob_Num % Table_Size] = Beta;
-		Hash_Chess[Zob_Num % Table_Size] = C;
 	}
 }
 
 //	查询状态的Eval
-std::pair<int, std::pair<int, int> >  Zobrist::Search_State(ull Chess, int Depth) const
+int  Zobrist::Search_State(ull Chess, int Depth) const
 {
-	if (Hash_Bool[Chess % Table_Size] == false || Hash_Depth[Chess % Table_Size] < Depth)
-		return std::make_pair(-1, std::make_pair(0, 0));
-	return std::make_pair(Hash_Table[Chess % Table_Size], std::make_pair(Hash_Alpha[Chess % Table_Size], Hash_Beta[Chess % Table_Size])); ;
+	if (Hash_Depth[Chess % Table_Size] < Depth)
+		return -INF;
+	return Hash_Table[Chess % Table_Size];
 }
 
 
@@ -133,12 +115,5 @@ int Zobrist::Get_Depth(ull Chess) const
 {
 	return Hash_Depth[Chess % Table_Size];
 }
-
-Chess Zobrist::Get_Chess(ull Zob_Num) const
-{
-	return Hash_Chess[Zob_Num % Table_Size];
-}
-
-
 
 

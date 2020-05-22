@@ -16,20 +16,15 @@ private:
 	ull Zobrist_Table[13][5][12 * 2 + 1];
 	mutable int* Hash_Table;
 	mutable int* Hash_Depth;
-	bool* Hash_Bool;
-	mutable int* Hash_Alpha;
-	mutable int* Hash_Beta;
-	mutable Chess* Hash_Chess;
 public:
 	Zobrist();
 	~Zobrist();
 	ull Add_Piece(ull Chess, int x, int y, char Piece) const ;
 	ull Remove_Piece(ull Chess, int x, int y, char Piece) const ;
-	void Record_State(ull Zob_Num, int Eval, int Depth, int Alpha, int Beta, Chess C) const;
-	std::pair<int, std::pair<int, int> > Search_State(ull Chess, int Depth) const;
+	void Record_State(ull Zob_Num, int Eval, int Depth) const;
+	int Search_State(ull Chess, int Depth) const;
 	ull Evaluate_Chess(Chess C) const;
 	ull Apply_Move(const Chess& C,const Movement& V, const ull& Zob) const;
 	bool Same_Role(ull Chess, int Depth) const ;
 	int Get_Depth(ull Chess) const ;
-	Chess Get_Chess(ull Zob_Num) const;
 };

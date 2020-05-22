@@ -15,9 +15,9 @@ const int STATUS_OK = 0;
 typedef unsigned long long ull;
 
 //	搜索宽度
-const int SEARCH_WIDTH = 15;
+const int SEARCH_WIDTH = 10;
 //	搜索深度
-const int SEARCH_DEPTH = 8;
+const int SEARCH_DEPTH = 10;
 /*
 Role	执棋方
 	Role == Role_UPPER	表示执棋方为大写，即上方
