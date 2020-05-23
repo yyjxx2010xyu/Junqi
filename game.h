@@ -40,7 +40,7 @@ class Coord
 {
 public:
 	int x, y;
-	Coord(int _x, int _y) :x(_x), y(_y) {}
+	Coord(int _x = 0, int _y = 0) :x(_x), y(_y) {}
 };
 
 /*
@@ -63,7 +63,7 @@ enum class PlayerType {
 };
 
 //	Return of function "_Search"
-typedef std::pair<int, std::vector<Movement> > Eval_Move;
+typedef std::pair<int, Movement> Eval_Move;
 
 /*
 Role	ִ�巽
@@ -85,5 +85,5 @@ public:
 	void Arg_Init(int argc, char* argv[]);
 	Movement Search(Chess Board, int Depth = 4);
 private:
-	Eval_Move _Search(Chess Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_State, const Zobrist& Zob, ull Cur_Zob);
+	Eval_Move _Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_State);
 };

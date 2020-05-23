@@ -78,6 +78,8 @@ public:
 	bool Is_Movable(Movement M);
 	void Set_Board(int x, int y, int ch);
 	void BFSSearch(int x, int y, std::vector<Coord>& Pos);
+	char Get_Piece(int x, int y) const;
+	void Set_Piece(int x, int y, char z);
 	std::vector<Movement> SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player);
 	friend static int Selector(Chess chess, const int& Role, Movement M);
 	friend class Zobrist;

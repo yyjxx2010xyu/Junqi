@@ -130,6 +130,9 @@ function:
 	对棋盘的评估函数
 */
 //const char RANK[] = "AJSVTYLPGF";
+
+
+
 int Chess::Evaluater(const int x, const int y, const char ch)
 {
 	int value = 0;
@@ -171,6 +174,7 @@ int Chess::Evaluater(const int x, const int y, const char ch)
 	
 
 	//加入行营所占的权重，希望尽可能占领多的行营
+
 	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.001 * (double)Railway[x][y]+0.003*(double)temp) * (double)value);
 }
 
@@ -438,6 +442,17 @@ void Chess::BFSSearch(int x, int y, std::vector<Coord>& Pos)
 				BFSSearch(x + HV_DirectX[k], y + HV_DirectY[k], Pos);
 	}
 }
+
+char Chess::Get_Piece(int x, int y) const
+{
+	return Board[x][y];
+}
+
+void Chess::Set_Piece(int x, int y, char z)
+{
+	Board[x][y] = z;
+}
+
 
 bool Expand_Move(std::vector<Movement>& Move, const int cur_x, const int cur_y, const int next_x, const int next_y, const char next_ch, const int Role, const int distance)
 {
