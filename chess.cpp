@@ -9,37 +9,96 @@ void Chess::init()
 	if (Board[0][1] == 'f' || Board[0][3] == 'f') {
 		Lower_Role = UP;
 		Upper_Role = DOWN;
-		
 	}
 	else {
 		Lower_Role = DOWN;
 		Upper_Role = UP;
 	}
-	if (Board[0][1] == 'f' || Board[0][1] == 'F') {
-		FlagPos[0][1] = 2;
-		FlagPos[0][0] = 1;
-		FlagPos[0][2] = 1;
-		FlagPos[1][1] = 1;
+	if (Lower_Role == UP) {
+		if (Board[0][1] == 'f') {
+			FlagPos[Upper_Role][0][1] = 40;
+			FlagPos[Upper_Role][0][0] = 20;
+			FlagPos[Upper_Role][0][2] = 20;
+			FlagPos[Upper_Role][1][1] = 20;
+			FlagPos[Upper_Role][1][0] = 10;
+			FlagPos[Upper_Role][2][1] = 10;
+			FlagPos[Upper_Role][1][2] = 10;
+			FlagPos[Upper_Role][0][3] = 10;
+		}
+		else {
+			FlagPos[Upper_Role][0][3] = 40;
+			FlagPos[Upper_Role][0][2] = 20;
+			FlagPos[Upper_Role][0][4] = 20;
+			FlagPos[Upper_Role][1][3] = 20;
+			FlagPos[Upper_Role][0][1] = 10;
+			FlagPos[Upper_Role][1][2] = 10;
+			FlagPos[Upper_Role][2][3] = 10;
+			FlagPos[Upper_Role][1][4] = 10;
+		}
+		if (Board[12][1] == 'F') {
+			FlagPos[Lower_Role][12][1] = 40;
+			FlagPos[Lower_Role][12][0] = 20;
+			FlagPos[Lower_Role][12][2] = 20;
+			FlagPos[Lower_Role][11][1] = 20;
+			FlagPos[Lower_Role][11][0] = 10;
+			FlagPos[Lower_Role][10][1] = 10;
+			FlagPos[Lower_Role][11][2] = 10;
+			FlagPos[Lower_Role][12][3] = 10;
+		}
+		else {
+			FlagPos[Lower_Role][12][3] = 40;
+			FlagPos[Lower_Role][12][2] = 20;
+			FlagPos[Lower_Role][12][4] = 20;
+			FlagPos[Lower_Role][11][3] = 20;
+			FlagPos[Lower_Role][12][1] = 10;
+			FlagPos[Lower_Role][11][2] = 10;
+			FlagPos[Lower_Role][10][3] = 10;
+			FlagPos[Lower_Role][11][4] = 10;
+		}
 	}
-	if (Board[0][3] == 'f' || Board[0][3] == 'F') {
-		FlagPos[0][3] = 2;
-		FlagPos[0][2] = 1;
-		FlagPos[0][4] = 1;
-		FlagPos[1][3] = 1;
+	else{
+		if (Board[0][1] == 'F') {
+			FlagPos[Lower_Role][0][1] = 40;
+			FlagPos[Lower_Role][0][0] = 20;
+			FlagPos[Lower_Role][0][2] = 20;
+			FlagPos[Lower_Role][1][1] = 20;
+			FlagPos[Lower_Role][1][0] = 10;
+			FlagPos[Lower_Role][2][1] = 10;
+			FlagPos[Lower_Role][1][2] = 10;
+			FlagPos[Lower_Role][0][3] = 10;
+		}
+		else {
+			FlagPos[Lower_Role][0][3] = 40;
+			FlagPos[Lower_Role][0][2] = 20;
+			FlagPos[Lower_Role][0][4] = 20;
+			FlagPos[Lower_Role][1][3] = 20;
+			FlagPos[Lower_Role][0][1] = 10;
+			FlagPos[Lower_Role][1][2] = 10;
+			FlagPos[Lower_Role][2][3] = 10;
+			FlagPos[Lower_Role][1][4] = 10;
+		}
+		if (Board[12][1] == 'f') {
+			FlagPos[Upper_Role][12][1] = 40;
+			FlagPos[Upper_Role][12][0] = 20;
+			FlagPos[Upper_Role][12][2] = 20;
+			FlagPos[Upper_Role][11][1] = 20;
+			FlagPos[Upper_Role][11][0] = 10;
+			FlagPos[Upper_Role][10][1] = 10;
+			FlagPos[Upper_Role][11][2] = 10;
+			FlagPos[Upper_Role][12][3] = 10;
+		}
+		else {
+			FlagPos[Upper_Role][12][3] = 40;
+			FlagPos[Upper_Role][12][2] = 20;
+			FlagPos[Upper_Role][12][4] = 20;
+			FlagPos[Upper_Role][11][3] = 20;
+			FlagPos[Upper_Role][12][1] = 10;
+			FlagPos[Upper_Role][11][2] = 10;
+			FlagPos[Upper_Role][10][3] = 10;
+			FlagPos[Upper_Role][11][4] = 10;
+		}
 	}
-	if (Board[12][1] == 'f' || Board[12][1] == 'F') {
-		FlagPos[12][1] = 2;
-		FlagPos[12][0] = 1;
-		FlagPos[12][2] = 1;
-		FlagPos[11][1] = 1;
-	}
-	if (Board[12][3] == 'f' || Board[12][3] == 'F') {
-		FlagPos[12][3] = 2;
-		FlagPos[12][2] = 1;
-		FlagPos[12][4] = 1;
-		FlagPos[11][3] = 1;
-	}
-
+	
 }
 
 /*
@@ -190,18 +249,21 @@ int Chess::Evaluater(const int x, const int y, const char ch)
 	else if (ch == BLANK)
 		value = 0;
 	int temp;
+	int killFlag;
 	//增加对方棋盘权重
 	if (ch >= 'A' && ch <= 'Z') {
 		temp = Chess_board[Upper_Role][x];
+		killFlag = FlagPos[Upper_Role][x][y];
 	}
 	else {
 		temp = Chess_board[Lower_Role][x];
+		killFlag = FlagPos[Lower_Role][x][y];
 	}
 	
 
 	//加入行营所占的权重，希望尽可能占领多的行营
 
-	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.001 * (double)Railway[x][y]+0.003*(double)temp+0.05*(double)FlagPos[x][y]) * (double)value);
+	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.001 * (double)Railway[x][y]+0.003*(double)temp+0.05*(double)killFlag) * (double)value);
 }
 
 int Chess::Evaluate_Chess(const int& Role)
