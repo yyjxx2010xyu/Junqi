@@ -437,10 +437,11 @@ std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int&
 {
 	Chess T(this->Board);
 
+	
 	typedef std::pair<int, Movement> move_pair;
 	auto comp = [](const move_pair& a,const move_pair& b) {return a.first > b.first; };
 	std::priority_queue<move_pair, std::vector<move_pair>, decltype(comp)> Q(comp);
-
+	
 	for (int i = 0; i < M.size(); i++) 
 	{
 		int temp = Selector(T, Role, M[i]);	
@@ -452,12 +453,14 @@ std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int&
 			Q.pop();
 	}
 	std::vector<Movement> result;
+	
 	result.resize(Q.size());
 	for (int i = Min(SEARCH_WIDTH, Q.size()) - 1; i >= 0; i--)
 	{
 		result[i] = Q.top().second;
 		Q.pop();
 	}
+
 	return result;
 }
 
