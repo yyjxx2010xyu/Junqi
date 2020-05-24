@@ -100,7 +100,8 @@ inline void common_draw_background(const Coord sizeofall, bool border, bool soli
 //	画棋子
 inline void Display_Chess(const char Board[][Chess_W], class Coord sizeofall, bool border, bool display);
 
-
+//军旗位置
+static int FlagPos[Chess_H][Chess_W] = { 0 };
 //	铁路位置
 const int Railway[Chess_H][Chess_W]{
 	{0, 0, 0, 0, 0},
