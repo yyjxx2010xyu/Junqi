@@ -81,7 +81,7 @@ public:
 	void Display();
 	bool Is_Movable(Movement M);
 	void Set_Board(int x, int y, int ch);
-	void BFSSearch(int x, int y, std::vector<Coord>& Pos);
+	void BFSSearch(int x, int y, std::vector<Coord>& Pos, const int& Role);
 	char Get_Piece(int x, int y) const;
 	void Set_Piece(int x, int y, char z);
 	std::vector<Movement> SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player);

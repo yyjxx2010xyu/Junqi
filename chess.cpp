@@ -163,7 +163,7 @@ bool Chess::Is_Over(const int& Role)
 				return true;
 		}
 	}
-			
+
 	if (Role == ROLE_UPPER) {
 		if (Upper_Role == UP) {
 			if (Board[0][1] != 'F' && Board[0][3] != 'F')
@@ -259,7 +259,7 @@ int Chess::Evaluater(const int x, const int y, const char ch)
 		temp = Chess_board[Lower_Role][x];
 		killFlag = FlagPos[Lower_Role][x][y];
 	}
-	
+
 
 	//加入行营所占的权重，希望尽可能占领多的行营
 
@@ -467,13 +467,13 @@ static int Selector(Chess& chess, const int& Role, Movement M)
 
 		chess.Set_Piece(M.From.x, M.From.y, From_Piece);
 		chess.Set_Piece(M.To.x, M.To.y, To_Piece);
-	}		
+	}
 	else {
 		before = chess.Evaluater(M.From.x, M.From.y, chess.Board[M.From.x][M.From.y]);
 		//少调用一次apply_move
 		after = chess.Evaluater(M.To.x, M.To.y, chess.Board[M.From.x][M.From.y]);
 	}
-	
+
 	return after - before;
 }
 
@@ -499,47 +499,63 @@ std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int&
 {
 	Chess T(this->Board);
 
+
 	typedef std::pair<int, Movement> move_pair;
-	auto comp = [](const move_pair& a,const move_pair& b) {return a.first > b.first; };
+	auto comp = [](const move_pair& a, const move_pair& b) {return a.first > b.first; };
 	std::priority_queue<move_pair, std::vector<move_pair>, decltype(comp)> Q(comp);
 
-	for (int i = 0; i < M.size(); i++) 
+	for (int i = 0; i < M.size(); i++)
 	{
-		int temp = Selector(T, Role, M[i]);	
-		if (!Q.empty() && (temp < Q.top().first))
+		int temp = Selector(T, Role, M[i]);
+		if (!Q.empty() && (temp < Q.top().first && Q.size() == SEARCH_WIDTH))
 			continue;
-		
+
 		Q.push(std::make_pair(temp, M[i]));
 		if (Q.size() == SEARCH_WIDTH + 1)
 			Q.pop();
 	}
 	std::vector<Movement> result;
+
 	result.resize(Q.size());
 	for (int i = Min(SEARCH_WIDTH, Q.size()) - 1; i >= 0; i--)
 	{
 		result[i] = Q.top().second;
 		Q.pop();
 	}
+
 	return result;
 }
 
 
-void Chess::BFSSearch(int x, int y, std::vector<Coord>& Pos)
+void Chess::BFSSearch(int cur_x, int cur_y, std::vector<Coord>& Pos, const int& Role)
 {
-	static bool check[Chess_H][Chess_W] = { 0 };
-	check[x][y] = true;
-	//只在碰到棋子时结束，且目前只记录碰到棋子时的坐标
-	if (Has_Chess(Board[x][y])) {
-		Coord P(x, y);
-		Pos.push_back(P);
-		return;
-	}
-	Coord P(x, y);
-	Pos.push_back(P);
-	for (int k = 0; k < 4; k++) {
-		if (!check[x + HV_DirectX[k]][y + HV_DirectY[k]] && Is_Valid(x + HV_DirectX[k], y + HV_DirectY[k]))
-			if (Is_Railway(x + HV_DirectX[k], y + HV_DirectY[k]))
-				BFSSearch(x + HV_DirectX[k], y + HV_DirectY[k], Pos);
+	bool visit[Chess_H][Chess_W];
+	memset(visit, false, sizeof(visit));
+	visit[cur_x][cur_y] = true;
+	
+	std::queue<std::pair<int, int> > Q;
+	Q.push(std::make_pair(cur_x, cur_y));
+	while (!Q.empty())
+	{
+		std::pair<int, int> Cur_Node = Q.front();
+		Q.pop();
+		for (int k = 0; k < 4; k++)
+		{
+			int next_x = Cur_Node.first + HV_DirectX[k];
+			int next_y = Cur_Node.second + HV_DirectY[k];
+			if (Is_Valid(next_x, next_y) && !visit[next_x][next_y] && Is_Railway(next_x, next_y))
+			{
+				visit[next_x][next_y] = true;
+				if (Has_Chess(Board[next_x][next_y]))
+				{
+					if ((Board[next_x][next_y] == 'D' || Board[next_x][next_y] == 'd') && Is_Role_Chess(Board[next_x][next_y], !Role))
+						Pos.push_back(Coord(next_x, next_y));
+					continue;
+				}
+				Q.push(std::make_pair(next_x, next_y));
+			}
+		}
+
 	}
 }
 
@@ -592,27 +608,24 @@ std::vector<Movement> Chess::Search_Movement(const int& Role, PlayerType Player)
 
 	for (int i = 0; i < Chess_H; i++) {
 		for (int j = 0; j < Chess_W; j++) {
-			if (Is_Role_Chess(Board[i][j], Role) && chessMap.at(Board[i][j]) != chessClass::junqi&& chessMap.at(Board[i][j]) != chessClass::dilei)
+			if (Is_Role_Chess(Board[i][j], Role) && chessMap.at(Board[i][j]) != chessClass::junqi && chessMap.at(Board[i][j]) != chessClass::dilei)
 			{
-				/*
-				if (Is_GongBing(Board[i][j])) {
-					//只考虑在铁路上的情况，其他情况在下面会考虑到
-					if (Is_Railway(i, j)) {
-						std::vector<Coord> Pos;
-						Pos.clear();
-						BFSSearch(i, j, Pos);
-						for (int k = 0; k < Pos.size(); k++) {
-							if (Is_Role_Chess(Board[Pos[k].x][Pos[k].y], Role))
-								continue;
-							Movement M = Movement(Coord(i, j), Pos[k]);
-							if (!Is_Movable(M))
-								continue;
-							Move.push_back(M);
-						}
-					}
-				}*/
-
 				
+				//	只考虑在铁路上的情况，其他情况在下面会考虑到
+				if (Is_GongBing(Board[i][j]) && Is_Railway(i, j))
+				{
+					std::vector<Coord> Pos;
+					Pos.clear();
+					BFSSearch(i, j, Pos, Role);
+					for (int k = 0; k < Pos.size(); k++) 
+					{
+						Movement M = Movement(Coord(i, j), Pos[k]);
+						Move.push_back(M);
+					}
+					
+				}
+
+
 				//	上下左右方向，铁路上自动扩展
 				for (int k = 0; k < 4; k++)
 					for (int d = 1; d <= Chess_H; d++)
@@ -640,6 +653,7 @@ std::vector<Movement> Chess::Search_Movement(const int& Role, PlayerType Player)
 		}
 		//	std::cout <<"Move.size:"<< Move.size() << std::endl;
 	}
+	//return Move;
 	return SelectMoveMent(Move, Role, Player);
 }
 
