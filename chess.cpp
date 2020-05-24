@@ -3,15 +3,41 @@
 #include "chess.h"
 #include "game.h"
 
+
 void Chess::init()
 {
 	if (Board[0][1] == 'f' || Board[0][3] == 'f') {
 		Lower_Role = UP;
 		Upper_Role = DOWN;
+		
 	}
 	else {
 		Lower_Role = DOWN;
 		Upper_Role = UP;
+	}
+	if (Board[0][1] == 'f' || Board[0][1] == 'F') {
+		FlagPos[0][1] = 2;
+		FlagPos[0][0] = 1;
+		FlagPos[0][2] = 1;
+		FlagPos[1][1] = 1;
+	}
+	if (Board[0][3] == 'f' || Board[0][3] == 'F') {
+		FlagPos[0][3] = 2;
+		FlagPos[0][2] = 1;
+		FlagPos[0][4] = 1;
+		FlagPos[1][3] = 1;
+	}
+	if (Board[12][1] == 'f' || Board[12][1] == 'F') {
+		FlagPos[12][1] = 2;
+		FlagPos[12][0] = 1;
+		FlagPos[12][2] = 1;
+		FlagPos[11][1] = 1;
+	}
+	if (Board[12][3] == 'f' || Board[12][3] == 'F') {
+		FlagPos[12][3] = 2;
+		FlagPos[12][2] = 1;
+		FlagPos[12][4] = 1;
+		FlagPos[11][3] = 1;
 	}
 
 }
@@ -175,7 +201,7 @@ int Chess::Evaluater(const int x, const int y, const char ch)
 
 	//加入行营所占的权重，希望尽可能占领多的行营
 
-	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.001 * (double)Railway[x][y]+0.003*(double)temp) * (double)value);
+	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.001 * (double)Railway[x][y]+0.003*(double)temp+0.05*(double)FlagPos[x][y]) * (double)value);
 }
 
 int Chess::Evaluate_Chess(const int& Role)
