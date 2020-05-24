@@ -3,6 +3,7 @@
 #include <iostream>
 #include <queue>
 #include <map>
+#include <cassert>
 #include "game.h"
 #include "connect.h"
 #include "cmd_console_tools.h"
@@ -51,23 +52,26 @@ int Rank_Judgement(char a, char b);
 class Chess
 {
 private:
-	std::vector<std::vector<char> >  Board;
+	char Board[Chess_H][Chess_W];
+
 public:
 	Chess()
 	{
-		Board.resize(Chess_H);
-		for (int i = 0; i < Chess_H; i++)
-			Board[i].resize(Chess_W);
+
 	}
-	Chess(std::vector<std::vector<char> >  board_data)
+	Chess(const Chess& board_data)
 	{
-		Board.resize(Chess_H);
-		for (int i = 0; i < Chess_H; i++) {
-			Board[i].resize(Chess_W);
-			Board[i] = board_data[i];
-		}
+		for (int i = 0; i < Chess_H; i++)
+			for (int j = 0; j < Chess_W; j++)
+				Board[i][j] = board_data.Board[i][j];
 	}
-	
+	Chess(const char board_data[][Chess_W])
+	{
+		for (int i = 0; i < Chess_H; i++)
+			for (int j = 0; j < Chess_W; j++)
+				Board[i][j] = board_data[i][j];
+	}
+
 	void init();//初始化棋盘位置，确认大小写在棋盘的位置
 	bool Is_Over(const int& Role);
 	int Evaluate_Chess(const int& Role);
@@ -85,6 +89,7 @@ public:
 	friend class Zobrist;
 
 	friend bool operator == (const Chess& A, const Chess& B);
+	friend void Display_Chess(const char Board[][Chess_W], class Coord sizeofall, bool border, bool display);
 };
 
 const int frontEndPos = 7;	//	前线位置
@@ -93,7 +98,7 @@ inline int isColor(int linePos,char ch);
 //	画棋盘
 inline void common_draw_background(const Coord sizeofall, bool border, bool solid, bool display, const Coord cursor);
 //	画棋子
-inline void Display_Chess(std::vector<std::vector<char> >  Board, class Coord sizeofall, bool border, bool display);
+inline void Display_Chess(const char Board[][Chess_W], class Coord sizeofall, bool border, bool display);
 
 
 //	铁路位置

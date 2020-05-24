@@ -78,7 +78,7 @@ bool Chess::Is_Over(const int& Role)
 				return true;
 		}
 	}
-			
+
 	if (Role == ROLE_UPPER) {
 		if (Upper_Role == UP) {
 			if (Board[0][1] != 'F' && Board[0][3] != 'F')
@@ -171,11 +171,11 @@ int Chess::Evaluater(const int x, const int y, const char ch)
 	else {
 		temp = Chess_board[Lower_Role][x];
 	}
-	
+
 
 	//加入行营所占的权重，希望尽可能占领多的行营
 
-	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.001 * (double)Railway[x][y]+0.003*(double)temp) * (double)value);
+	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.001 * (double)Railway[x][y] + 0.003 * (double)temp) * (double)value);
 }
 
 int Chess::Evaluate_Chess(const int& Role)
@@ -249,7 +249,7 @@ void Chess::Display()
 
 	//	3. 画界面和棋子
 	common_draw_background(board, true, true, true, { 0,0 });
-	Display_Chess(Board, board, true, true);
+	Display_Chess(this->Board, board, true, true);
 	//	4. 恢复默认设置
 	setcolor();
 	std::cout << std::endl << std::endl;
@@ -379,13 +379,13 @@ static int Selector(Chess& chess, const int& Role, Movement M)
 
 		chess.Set_Piece(M.From.x, M.From.y, From_Piece);
 		chess.Set_Piece(M.To.x, M.To.y, To_Piece);
-	}		
+	}
 	else {
 		before = chess.Evaluater(M.From.x, M.From.y, chess.Board[M.From.x][M.From.y]);
 		//少调用一次apply_move
 		after = chess.Evaluater(M.To.x, M.To.y, chess.Board[M.From.x][M.From.y]);
 	}
-	
+
 	return after - before;
 }
 
@@ -412,26 +412,32 @@ std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int&
 	Chess T(this->Board);
 
 	typedef std::pair<int, Movement> move_pair;
-	auto comp = [](const move_pair& a,const move_pair& b) {return a.first > b.first; };
+	auto comp = [](const move_pair& a, const move_pair& b) {return a.first > b.first; };
 	std::priority_queue<move_pair, std::vector<move_pair>, decltype(comp)> Q(comp);
 
-	for (int i = 0; i < M.size(); i++) 
+	for (int i = 0; i < M.size(); i++)
 	{
-		int temp = Selector(T, Role, M[i]);	
+		int temp = Selector(T, Role, M[i]);
+
 		if (!Q.empty() && (temp < Q.top().first))
 			continue;
-		
+
 		Q.push(std::make_pair(temp, M[i]));
 		if (Q.size() == SEARCH_WIDTH + 1)
 			Q.pop();
 	}
+	int size = Q.size();
 	std::vector<Movement> result;
+
 	result.resize(Q.size());
+
 	for (int i = Min(SEARCH_WIDTH, Q.size()) - 1; i >= 0; i--)
 	{
 		result[i] = Q.top().second;
 		Q.pop();
 	}
+
+
 	return result;
 }
 
@@ -504,7 +510,7 @@ std::vector<Movement> Chess::Search_Movement(const int& Role, PlayerType Player)
 
 	for (int i = 0; i < Chess_H; i++) {
 		for (int j = 0; j < Chess_W; j++) {
-			if (Is_Role_Chess(Board[i][j], Role) && chessMap.at(Board[i][j]) != chessClass::junqi&& chessMap.at(Board[i][j]) != chessClass::dilei)
+			if (Is_Role_Chess(Board[i][j], Role) && chessMap.at(Board[i][j]) != chessClass::junqi && chessMap.at(Board[i][j]) != chessClass::dilei)
 			{
 				/*
 				if (Is_GongBing(Board[i][j])) {
@@ -524,7 +530,7 @@ std::vector<Movement> Chess::Search_Movement(const int& Role, PlayerType Player)
 					}
 				}*/
 
-				
+
 				//	上下左右方向，铁路上自动扩展
 				for (int k = 0; k < 4; k++)
 					for (int d = 1; d <= Chess_H; d++)
@@ -620,12 +626,12 @@ inline void common_draw_background(const Coord sizeofall, bool border, bool soli
 }
 
 //	画棋子
-inline void Display_Chess(std::vector<std::vector<char> >  Board, class Coord sizeofall, bool border, bool display) {
-	if (Board.size() != sizeofall.y || Board[0].size() != sizeofall.x)
+void Display_Chess(const char Board[][Chess_W], class Coord sizeofall, bool border, bool display) {
+	if (Chess_H != sizeofall.y || Chess_W != sizeofall.x)
 		return;
 
-	for (unsigned i = 0; i < Board.size(); i++) {
-		for (unsigned j = 0; j < Board[i].size(); j++) {
+	for (unsigned i = 0; i < Chess_H; i++) {
+		for (unsigned j = 0; j < Chess_W; j++) {
 			showch(2 * display + 2 + 2 * j * (border + 1), 2 + display + i * (border + 1), Board[i][j], COLOR_HWHITE, isColor(i, Board[i][j]));
 		}
 		std::cout << std::endl;

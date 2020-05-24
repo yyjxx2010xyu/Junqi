@@ -54,6 +54,7 @@ Movement Game::Search(Chess Board, int Depth)
 	begin_time = (int)time(0);
 
 	Chess Cur_Board(Board);
+
 	Eval_Move Ret = _Search(Cur_Board, Depth, alpha, beta, PlayerType::MaximizingPlayer, Role);
 
 	finish_time = (int)time(0);
