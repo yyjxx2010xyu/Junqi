@@ -646,12 +646,12 @@ inline void common_draw_background(const Coord sizeofall, bool border, bool soli
 }
 
 //	»­Æå×Ó
-inline void Display_Chess(std::vector<std::vector<char> >  Board, class Coord sizeofall, bool border, bool display) {
-	if (Board.size() != sizeofall.y || Board[0].size() != sizeofall.x)
+void Display_Chess(const char Board[][Chess_W], class Coord sizeofall, bool border, bool display) {
+	if (Chess_H != sizeofall.y || Chess_W != sizeofall.x)
 		return;
 
-	for (unsigned i = 0; i < Board.size(); i++) {
-		for (unsigned j = 0; j < Board[i].size(); j++) {
+	for (unsigned i = 0; i < Chess_H; i++) {
+		for (unsigned j = 0; j < Chess_W; j++) {
 			showch(2 * display + 2 + 2 * j * (border + 1), 2 + display + i * (border + 1), Board[i][j], COLOR_HWHITE, isColor(i, Board[i][j]));
 		}
 		std::cout << std::endl;
