@@ -362,17 +362,23 @@ function:
 	寻找搜索方向，有着充分的想象空间
 */
 
-static int Selector(Chess chess, const int& Role, Movement M)
+static int Selector(Chess& chess, const int& Role, Movement M)
 {
 	int after;
 	int before;
 	if (Has_Chess(chess.Board[M.To.x][M.To.y])) {
+		char From_Piece = chess.Get_Piece(M.From.x, M.From.y);
+		char To_Piece = chess.Get_Piece(M.To.x, M.To.y);
+
 		before = chess.Evaluater(M.From.x, M.From.y, chess.Board[M.From.x][M.From.y]) - chess.Evaluater(M.To.x, M.To.y, chess.Board[M.To.x][M.To.y]);
 		chess = chess.Apply_Move(M);
 		if (Is_Role_Chess(chess.Board[M.To.x][M.To.y], Role))
 			after = chess.Evaluater(M.To.x, M.To.y, chess.Board[M.To.x][M.To.y]);
 		else
 			after = 0 - chess.Evaluater(M.To.x, M.To.y, chess.Board[M.To.x][M.To.y]);
+
+		chess.Set_Piece(M.From.x, M.From.y, From_Piece);
+		chess.Set_Piece(M.To.x, M.To.y, To_Piece);
 	}		
 	else {
 		before = chess.Evaluater(M.From.x, M.From.y, chess.Board[M.From.x][M.From.y]);
@@ -391,7 +397,7 @@ bool operator==(const Chess& A, const Chess& B)
 				return false;
 	return true;
 }
-
+//	用于测试Selector正确性的
 static int Selector_Origin(Chess chess, const int& Role, Movement M)
 {
 	int before = chess.Evaluate_Chess(Role);
@@ -400,26 +406,55 @@ static int Selector_Origin(Chess chess, const int& Role, Movement M)
 	return after - before;
 }
 
+inline int Min(int x, int y) { return x > y ? y : x; }
 std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player)
 {
-	Chess T;
-	for (int i = 0; i < Chess_H; i++)
-		for (int j = 0; j < Chess_W; j++)
-			T.Board[i][j] = this->Board[i][j];//复刻一个棋盘
+	Chess T(this->Board);
+
 	std::vector<std::pair<int, Movement>> pair;
-	for (int i = 0; i < M.size(); i++) {
+
+	typedef std::pair<int, Movement> move_pair;
+	auto comp = [](const move_pair& a,const move_pair& b) {return a.first > b.first; };
+	std::priority_queue<move_pair, std::vector<move_pair>, decltype(comp)> Q(comp), P(comp);
+
+	for (int i = 0; i < M.size(); i++) 
+	{
 		int temp = Selector(T, Role, M[i]);
-#ifdef DEBUG
 		//assert(temp == Selector_Origin(T, Role, M[i]));
-#endif
+
 		pair.push_back(std::make_pair(temp, M[i]));
+
+		
+		if (!Q.empty() && (temp < Q.top().first))
+			continue;
+		
+		Q.push(std::make_pair(temp, M[i]));
+		//int top = Q.top().first;
+		if (Q.size() == SEARCH_WIDTH + 1)
+			Q.pop();
 	}
-
-	sort(pair.begin(), pair.end(), [](std::pair<int, Movement> a, std::pair<int, Movement> b) {return a.first > b.first; });
-
+	//P = Q;
+	
 	std::vector<Movement> result;
+	std::vector<int> R;
+	R.resize(SEARCH_WIDTH);
+
+	result.resize(SEARCH_WIDTH);
+	for (int i = Min(SEARCH_WIDTH, Q.size()) - 1; i >= 0; i--)
+	{
+		result[i] = Q.top().second;
+		R[i] = Q.top().first;
+		Q.pop();
+	}
+	/*	sort(pair.begin(), pair.end(), [](std::pair<int, Movement> a, std::pair<int, Movement> b) {return a.first > b.first; });
 	for (int i = 0; i < pair.size() && i < SEARCH_WIDTH; i++)
-		result.push_back(pair[i].second);
+	{
+		if (R[i]!=pair[i].first)
+			std::cout << R[i] << " " << pair[i].first << " " << i << Q.size() << std::endl;
+		assert(R[i] == pair[i].first);
+	}
+	*/
+		
 	return result;
 }
 
@@ -510,9 +545,9 @@ std::vector<Movement> Chess::Search_Movement(const int& Role, PlayerType Player)
 							Move.push_back(M);
 						}
 					}
-				}
+				}*/
 
-				*/
+				
 				//	上下左右方向，铁路上自动扩展
 				for (int k = 0; k < 4; k++)
 					for (int d = 1; d <= Chess_H; d++)

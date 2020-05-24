@@ -42,25 +42,24 @@ output:
 function:
 	进行搜索确定最优下子方案
 */
+
+static int begin_time;
+static int finish_time;
 Movement Game::Search(Chess Board, int Depth)
 {
 
 	int alpha = -INF;
 	int beta = INF;
 
-#ifdef DEBUG
-	int begin_time = (int)time(0);
-#endif // DEBUG
+	begin_time = (int)time(0);
 
 	Chess Cur_Board(Board);
 	Eval_Move Ret = _Search(Cur_Board, Depth, alpha, beta, PlayerType::MaximizingPlayer, Role);
 
-#ifdef DEBUG
-	int finish_time = (int)time(0);
+	finish_time = (int)time(0);
 	std::cout << "search time:" << finish_time - begin_time << std::endl;
 	getchar();
 	getchar();
-#endif // DEBUG
 
 	return Ret.second;
 }
@@ -108,6 +107,10 @@ function:
 */
 Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_Role)
 {
+
+	finish_time = (int)time(0);
+	//if (finish_time - begin_time > this->Time_Limit)
+	//	return std::make_pair(-INF, Movement(Coord(), Coord()));
 
 	if (Depth == 0 || Cur_Board.Is_Over(Cur_Role))
 	{

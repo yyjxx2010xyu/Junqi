@@ -81,7 +81,7 @@ public:
 	char Get_Piece(int x, int y) const;
 	void Set_Piece(int x, int y, char z);
 	std::vector<Movement> SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player);
-	friend static int Selector(Chess chess, const int& Role, Movement M);
+	friend static int Selector(Chess& chess, const int& Role, Movement M);
 	friend class Zobrist;
 
 	friend bool operator == (const Chess& A, const Chess& B);

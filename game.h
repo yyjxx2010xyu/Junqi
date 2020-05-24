@@ -3,6 +3,11 @@
 #include "chess.h"
 #include "zobrist.h"
 #define DEBUG
+
+
+
+
+
 /*
 State状态
 STATE_END	表示当前棋盘结束
@@ -52,7 +57,7 @@ class Movement
 {
 public:
 	Coord From, To;
-	Movement(Coord _From, Coord _To) :From(_From), To(_To) {}
+	Movement(Coord _From = (0, 0), Coord _To = (0, 0)) :From(_From), To(_To) {}
 };
 
 
