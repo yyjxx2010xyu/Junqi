@@ -411,50 +411,27 @@ std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int&
 {
 	Chess T(this->Board);
 
-	std::vector<std::pair<int, Movement>> pair;
-
 	typedef std::pair<int, Movement> move_pair;
 	auto comp = [](const move_pair& a,const move_pair& b) {return a.first > b.first; };
-	std::priority_queue<move_pair, std::vector<move_pair>, decltype(comp)> Q(comp), P(comp);
+	std::priority_queue<move_pair, std::vector<move_pair>, decltype(comp)> Q(comp);
 
 	for (int i = 0; i < M.size(); i++) 
 	{
-		int temp = Selector(T, Role, M[i]);
-		//assert(temp == Selector_Origin(T, Role, M[i]));
-
-		pair.push_back(std::make_pair(temp, M[i]));
-
-		
+		int temp = Selector(T, Role, M[i]);	
 		if (!Q.empty() && (temp < Q.top().first))
 			continue;
 		
 		Q.push(std::make_pair(temp, M[i]));
-		//int top = Q.top().first;
 		if (Q.size() == SEARCH_WIDTH + 1)
 			Q.pop();
 	}
-	//P = Q;
-	
 	std::vector<Movement> result;
-	std::vector<int> R;
-	R.resize(SEARCH_WIDTH);
-
-	result.resize(SEARCH_WIDTH);
+	result.resize(Q.size());
 	for (int i = Min(SEARCH_WIDTH, Q.size()) - 1; i >= 0; i--)
 	{
 		result[i] = Q.top().second;
-		R[i] = Q.top().first;
 		Q.pop();
 	}
-	/*	sort(pair.begin(), pair.end(), [](std::pair<int, Movement> a, std::pair<int, Movement> b) {return a.first > b.first; });
-	for (int i = 0; i < pair.size() && i < SEARCH_WIDTH; i++)
-	{
-		if (R[i]!=pair[i].first)
-			std::cout << R[i] << " " << pair[i].first << " " << i << Q.size() << std::endl;
-		assert(R[i] == pair[i].first);
-	}
-	*/
-		
 	return result;
 }
 
