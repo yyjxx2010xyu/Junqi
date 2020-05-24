@@ -241,7 +241,7 @@ int Chess::Evaluater(const int x, const int y, const char ch)
 	else if (ch == 'a' || ch == 'A')//X8
 		value = 12800;
 	else if (ch == 'f' || ch == 'F')//X8
-		value = 102400;
+		value = 204800;
 	else if (ch == 'z' || ch == 'Z')
 		value = 800;//希望炸弹至少消灭团长，或者团长以下的单位可主动消灭炸弹
 	else if (ch == 'd' || ch == 'D')
@@ -262,8 +262,9 @@ int Chess::Evaluater(const int x, const int y, const char ch)
 
 
 	//加入行营所占的权重，希望尽可能占领多的行营
+	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.002 * (double)Railway[x][y] + 0.008 * (double)temp + 0.05 * (double)killFlag) * (double)value);
 
-	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.001 * (double)Railway[x][y]+0.003*(double)temp+0.05*(double)killFlag) * (double)value);
+//	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.001 * (double)Railway[x][y]+0.003*(double)temp+0.05*(double)killFlag) * (double)value);
 }
 
 int Chess::Evaluate_Chess(const int& Role)

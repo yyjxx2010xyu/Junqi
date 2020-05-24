@@ -19,7 +19,7 @@ input: 以下三种情况
 例如: ppdfd/plldz/z1g1y/yt1ty/s1g1s/jvgva/5/JVGVA/S1G1S/YT1TY/Z1G1Y/PLLDZ/PPDFD 0 0
 (3)	init <当前棋局>
 用于将开局时的棋局传递给后手的引擎，保证开始运算的时间基本一致。
-例如: init ppdfd/plldz/z1g1y/yt1tl/s1g1s/jvgva/5/JLGPA/Z1S1Z/PY1TS/T1G1L/PGYDV/LVDFD 0 0
+例如: init dfdvl/vdygp/l1g1t/st1yp/z1s1z/apglj/5/JLGPA/Z1S1Z/PY1TS/T1G1L/PGYDV/LVDFD 0 0
 (5)	end
 棋局结束，引擎退出。
 
