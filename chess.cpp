@@ -444,7 +444,7 @@ std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int&
 	for (int i = 0; i < M.size(); i++) 
 	{
 		int temp = Selector(T, Role, M[i]);	
-		if (!Q.empty() && (temp < Q.top().first))
+		if (!Q.empty() && (temp < Q.top().first && Q.size() == SEARCH_WIDTH))
 			continue;
 		
 		Q.push(std::make_pair(temp, M[i]));
@@ -578,6 +578,7 @@ std::vector<Movement> Chess::Search_Movement(const int& Role, PlayerType Player)
 		}
 		//	std::cout <<"Move.size:"<< Move.size() << std::endl;
 	}
+	//return Move;
 	return SelectMoveMent(Move, Role, Player);
 }
 
