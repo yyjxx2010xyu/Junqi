@@ -32,7 +32,9 @@ Chess Board		返回棋盘数据，记录在Board中
 int Connect::Get_Board(Chess& Board)
 {
 	std::string Str;
+	
 	std::cin >> Str;
+	
 	bool after = false;
 	if (Str == "end")
 		return STATUS_END;
@@ -71,7 +73,7 @@ int Connect::Get_Board(Chess& Board)
 		}
 	}
 	int Value1, Value2;
-	std::cin >> Value1 >> Value2;
+		std::cin >> Value1 >> Value2;
 	if (after)
 		return STATUS_AFTER;
 	return STATUS_OK;

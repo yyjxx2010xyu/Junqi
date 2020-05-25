@@ -58,8 +58,8 @@ Movement Game::Search(Chess Board, int Depth)
 
 	finish_time = (int)time(0);
 
-	std::cout << "search time:" << finish_time - begin_time << std::endl;
-	getchar(), getchar();
+	//	std::cout << "search time:" << finish_time - begin_time << std::endl;
+	
 	return Ret.second;
 }
 
@@ -136,7 +136,7 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 
 			if (Depth == SEARCH_DEPTH)
 			{
-				std::cout << "Depth == " << SEARCH_DEPTH << " " << (char)('A' + 12 - V.From.x) << V.From.y << " " << (char)('A' + 12 - V.To.x) << V.To.y << " Eval:" << Eval << " Heur Eval:" << Cur_Board.Evaluate_Chess(Cur_Role) << std::endl;
+				//	std::cout << "Depth == " << SEARCH_DEPTH << " " << (char)('A' + 12 - V.From.x) << V.From.y << " " << (char)('A' + 12 - V.To.x) << V.To.y << " Eval:" << Eval << " Heur Eval:" << Cur_Board.Evaluate_Chess(Cur_Role) << std::endl;
 				if (To_Piece == 'f' || To_Piece == 'F')
 					return std::make_pair(Max_Eval, V);
 			}
