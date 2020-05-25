@@ -33,10 +33,13 @@ int Connect::Get_Board(Chess& Board)
 {
 	std::string Str;
 	std::cin >> Str;
+	bool after = false;
 	if (Str == "end")
 		return STATUS_END;
-	if (Str == "init")
+	if (Str == "init") {
 		std::cin >> Str;
+		after = true;
+	}
 	int x = 0, y = 0;
 	for (int i = 0; i < Str.length(); i++)
 	{
@@ -69,6 +72,8 @@ int Connect::Get_Board(Chess& Board)
 	}
 	int Value1, Value2;
 	std::cin >> Value1 >> Value2;
+	if (after)
+		return STATUS_AFTER;
 	return STATUS_OK;
 }
 

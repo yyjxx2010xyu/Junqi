@@ -16,6 +16,8 @@ STATE_LOWER	当前执子方为下部，期盼数据中的小写部分
 */
 const int STATUS_END = -1;
 const int STATUS_OK = 0;
+const int STATUS_AFTER = 1;
+
 
 const int SEARCH_DEC = 4;
 typedef unsigned long long ull;
