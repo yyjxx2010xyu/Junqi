@@ -223,29 +223,29 @@ int Chess::Evaluater(const int x, const int y, const char ch)
 	int value = 0;
 	//正常等级
 	if (ch == 'g' || ch == 'G')
-		value = 100;
+		value = 110;
 	else if (ch == 'p' || ch == 'P')
-		value = 100;
+		value = 120;
 	else if (ch == 'l' || ch == 'L')//X2
-		value = 200;
+		value = 250;
 	else if (ch == 'y' || ch == 'Y')//X3
-		value = 400;
+		value = 520;
 	else if (ch == 't' || ch == 'T')//X4
-		value = 800;
+		value = 1080;
 	else if (ch == 'v' || ch == 'V')//X5
-		value = 1600;
+		value = 2200;
 	else if (ch == 's' || ch == 'S')//X6
-		value = 3200;
+		value = 4500;
 	else if (ch == 'j' || ch == 'J')//X7
-		value = 6400;
+		value = 9600;
 	else if (ch == 'a' || ch == 'A')//X8
 		value = 12800;
 	else if (ch == 'f' || ch == 'F')//X8
 		value = 204800;
 	else if (ch == 'z' || ch == 'Z')
-		value = 800;//希望炸弹至少消灭团长，或者团长以下的单位可主动消灭炸弹
+		value = 3600;//希望炸弹至少消灭团长，或者团长以下的单位可主动消灭炸弹
 	else if (ch == 'd' || ch == 'D')
-		value = 2400;//地雷不视为威胁，营长或营长以下都可主动牺牲
+		value = 4000;//地雷不视为威胁，营长或营长以下都可主动牺牲
 	else if (ch == BLANK)
 		value = 0;
 	int temp;
