@@ -52,8 +52,9 @@ int main(int argc, char* argv[])
 		Board.Display();
 		Movement Move = Junqi.Search(Board);
 		Board = Board.Apply_Move(Move);
-		Board.Display();
+		
 		Con.Send_Move(Move);
+		fflush(stdout);
 
 	}
 	/*Chess Board;

@@ -58,10 +58,7 @@ Movement Game::Search(Chess Board, int Depth)
 	Eval_Move Ret = _Search(Cur_Board, Depth, alpha, beta, PlayerType::MaximizingPlayer, Role, SEARCH_WIDTH);
 
 	finish_time = (int)time(0);
-	std::cout << "search time:" << finish_time - begin_time << std::endl;
-	getchar();
-	getchar();
-
+	//	std::cout << "search time:" << finish_time - begin_time << std::endl;
 	return Ret.second;
 }
 
