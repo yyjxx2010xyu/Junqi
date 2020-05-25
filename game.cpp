@@ -116,7 +116,7 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 	if (Depth == 0 || Cur_Board.Is_Over(Cur_Role))
 	{
 		//	Eval函数始终返回的机器执子方的最优解
-		return std::make_pair(Cur_Board.Evaluate_Chess(this->Role), Movement(Coord(), Coord()));
+		return std::make_pair(Cur_Board.Evaluate_Chess(Cur_Role), Movement(Coord(), Coord()));
 	}
 
 	if (Player == PlayerType::MaximizingPlayer)
@@ -124,15 +124,16 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 		int Max_Eval = -INF;
 		Movement Best_Move = Movement(Coord(), Coord());
 		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role, Player, Search_Width);
-
+		
 		for (std::vector<Movement>::iterator iter = Move.begin(); iter != Move.end(); iter++)
 		{
 			Movement V = *iter;
 			char From_Piece = Cur_Board.Get_Piece(V.From.x, V.From.y);
 			char To_Piece = Cur_Board.Get_Piece(V.To.x, V.To.y);
 			Cur_Board = Cur_Board.Apply_Move(V);
+			//	Cur_Board.Display();
 
-			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role), Search_Width - SEARCH_DEC);
+			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role), Search_Width);
 			Cur_Board.Set_Piece(V.From.x, V.From.y, From_Piece);
 			Cur_Board.Set_Piece(V.To.x, V.To.y, To_Piece);
 
@@ -140,18 +141,15 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 
 			if (Depth == SEARCH_DEPTH)
 			{
-				
 				std::cout << "Depth == " << SEARCH_DEPTH << " " << (char)('A' + 12 - V.From.x) << V.From.y << " " << (char)('A' + 12 - V.To.x) << V.To.y << " Eval:" << Eval << " Heur Eval:" << Cur_Board.Evaluate_Chess(Cur_Role) << std::endl;
 				if (To_Piece == 'f' || To_Piece == 'F')
 					return std::make_pair(Max_Eval, V);
 			}
-			
-			
+
 			if (Eval > Max_Eval)
 			{
 				Max_Eval = Eval;
-				if (Depth == SEARCH_DEPTH)
-					Best_Move = V;
+				Best_Move = V;
 
 				Alpha = (Eval > Alpha) ? Eval : Alpha;
 
@@ -159,7 +157,6 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 					break;
 			}
 		}
-
 		return std::make_pair(Max_Eval, Best_Move);
 	}
 
@@ -169,29 +166,32 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 		int Min_Eval = INF;
 		Movement Best_Move = Movement(Coord(), Coord());
 		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role, Player, Search_Width);
-
+		
 		for (std::vector<Movement>::iterator iter = Move.begin(); iter != Move.end(); iter++)
 		{
 			Movement V = *iter;
 			char From_Piece = Cur_Board.Get_Piece(V.From.x, V.From.y);
 			char To_Piece = Cur_Board.Get_Piece(V.To.x, V.To.y);
 			Cur_Board = Cur_Board.Apply_Move(V);
-
+			//	Cur_Board.Display();
 			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MaximizingPlayer, Oppsite_Role(Cur_Role), Search_Width - SEARCH_DEC);
+
 			Cur_Board.Set_Piece(V.From.x, V.From.y, From_Piece);
 			Cur_Board.Set_Piece(V.To.x, V.To.y, To_Piece);
 
-			int Eval = Ret.first;
 
+			int Eval = Ret.first;
 
 			if (Eval < Min_Eval)
 			{
 				Min_Eval = Eval;
+				Best_Move = V;
 				Beta = (Eval < Beta) ? Eval : Beta;
 				if (Beta <= Alpha)
 					break;
 			}
 		}
+
 		return std::make_pair(Min_Eval, Best_Move);
 	}
 
