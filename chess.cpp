@@ -3,7 +3,9 @@
 #include "chess.h"
 #include "game.h"
 
-
+const int CENTER_ONE = 10;
+const int CENTER_TWO = 5;
+const int CENTER_THREE = 2;
 void Chess::init()
 {
 	if (Board[0][1] == 'f' || Board[0][3] == 'f') {
@@ -16,86 +18,86 @@ void Chess::init()
 	}
 	if (Lower_Role == UP) {
 		if (Board[0][1] == 'f') {
-			FlagPos[Upper_Role][0][1] = 40;
-			FlagPos[Upper_Role][0][0] = 20;
-			FlagPos[Upper_Role][0][2] = 20;
-			FlagPos[Upper_Role][1][1] = 20;
-			FlagPos[Upper_Role][1][0] = 10;
-			FlagPos[Upper_Role][2][1] = 10;
-			FlagPos[Upper_Role][1][2] = 10;
-			FlagPos[Upper_Role][0][3] = 10;
+			FlagPos[Upper_Role][0][1] = CENTER_ONE;
+			FlagPos[Upper_Role][0][0] = CENTER_TWO;
+			FlagPos[Upper_Role][0][2] = CENTER_TWO;
+			FlagPos[Upper_Role][1][1] = CENTER_TWO;
+			FlagPos[Upper_Role][1][0] = CENTER_THREE;
+			FlagPos[Upper_Role][2][1] = CENTER_THREE;
+			FlagPos[Upper_Role][1][2] = CENTER_THREE;
+			FlagPos[Upper_Role][0][3] = CENTER_THREE;
 		}
 		else {
-			FlagPos[Upper_Role][0][3] = 40;
-			FlagPos[Upper_Role][0][2] = 20;
-			FlagPos[Upper_Role][0][4] = 20;
-			FlagPos[Upper_Role][1][3] = 20;
-			FlagPos[Upper_Role][0][1] = 10;
-			FlagPos[Upper_Role][1][2] = 10;
-			FlagPos[Upper_Role][2][3] = 10;
-			FlagPos[Upper_Role][1][4] = 10;
+			FlagPos[Upper_Role][0][3] = CENTER_ONE;
+			FlagPos[Upper_Role][0][2] = CENTER_TWO;
+			FlagPos[Upper_Role][0][4] = CENTER_TWO;
+			FlagPos[Upper_Role][1][3] = CENTER_TWO;
+			FlagPos[Upper_Role][0][1] = CENTER_THREE;
+			FlagPos[Upper_Role][1][2] = CENTER_THREE;
+			FlagPos[Upper_Role][2][3] = CENTER_THREE;
+			FlagPos[Upper_Role][1][4] = CENTER_THREE;
 		}
 		if (Board[12][1] == 'F') {
-			FlagPos[Lower_Role][12][1] = 40;
-			FlagPos[Lower_Role][12][0] = 20;
-			FlagPos[Lower_Role][12][2] = 20;
-			FlagPos[Lower_Role][11][1] = 20;
-			FlagPos[Lower_Role][11][0] = 10;
-			FlagPos[Lower_Role][10][1] = 10;
-			FlagPos[Lower_Role][11][2] = 10;
-			FlagPos[Lower_Role][12][3] = 10;
+			FlagPos[Lower_Role][12][1] = CENTER_ONE;
+			FlagPos[Lower_Role][12][0] = CENTER_TWO;
+			FlagPos[Lower_Role][12][2] = CENTER_TWO;
+			FlagPos[Lower_Role][11][1] = CENTER_TWO;
+			FlagPos[Lower_Role][11][0] = CENTER_THREE;
+			FlagPos[Lower_Role][10][1] = CENTER_THREE;
+			FlagPos[Lower_Role][11][2] = CENTER_THREE;
+			FlagPos[Lower_Role][12][3] = CENTER_THREE;
 		}
 		else {
-			FlagPos[Lower_Role][12][3] = 40;
-			FlagPos[Lower_Role][12][2] = 20;
-			FlagPos[Lower_Role][12][4] = 20;
-			FlagPos[Lower_Role][11][3] = 20;
-			FlagPos[Lower_Role][12][1] = 10;
-			FlagPos[Lower_Role][11][2] = 10;
-			FlagPos[Lower_Role][10][3] = 10;
-			FlagPos[Lower_Role][11][4] = 10;
+			FlagPos[Lower_Role][12][3] = CENTER_ONE;
+			FlagPos[Lower_Role][12][2] = CENTER_TWO;
+			FlagPos[Lower_Role][12][4] = CENTER_TWO;
+			FlagPos[Lower_Role][11][3] = CENTER_TWO;
+			FlagPos[Lower_Role][12][1] = CENTER_THREE;
+			FlagPos[Lower_Role][11][2] = CENTER_THREE;
+			FlagPos[Lower_Role][10][3] = CENTER_THREE;
+			FlagPos[Lower_Role][11][4] = CENTER_THREE;
 		}
 	}
 	else {
 		if (Board[0][1] == 'F') {
-			FlagPos[Lower_Role][0][1] = 40;
-			FlagPos[Lower_Role][0][0] = 20;
-			FlagPos[Lower_Role][0][2] = 20;
-			FlagPos[Lower_Role][1][1] = 20;
-			FlagPos[Lower_Role][1][0] = 10;
-			FlagPos[Lower_Role][2][1] = 10;
-			FlagPos[Lower_Role][1][2] = 10;
-			FlagPos[Lower_Role][0][3] = 10;
+			FlagPos[Lower_Role][0][1] = CENTER_ONE;
+			FlagPos[Lower_Role][0][0] = CENTER_TWO;
+			FlagPos[Lower_Role][0][2] = CENTER_TWO;
+			FlagPos[Lower_Role][1][1] = CENTER_TWO;
+			FlagPos[Lower_Role][1][0] = CENTER_THREE;
+			FlagPos[Lower_Role][2][1] = CENTER_THREE;
+			FlagPos[Lower_Role][1][2] = CENTER_THREE;
+			FlagPos[Lower_Role][0][3] = CENTER_THREE;
 		}
 		else {
-			FlagPos[Lower_Role][0][3] = 40;
-			FlagPos[Lower_Role][0][2] = 20;
-			FlagPos[Lower_Role][0][4] = 20;
-			FlagPos[Lower_Role][1][3] = 20;
-			FlagPos[Lower_Role][0][1] = 10;
-			FlagPos[Lower_Role][1][2] = 10;
-			FlagPos[Lower_Role][2][3] = 10;
-			FlagPos[Lower_Role][1][4] = 10;
+			FlagPos[Lower_Role][0][3] = CENTER_ONE;
+			FlagPos[Lower_Role][0][2] = CENTER_TWO;
+			FlagPos[Lower_Role][0][4] = CENTER_TWO;
+			FlagPos[Lower_Role][1][3] = CENTER_TWO;
+			FlagPos[Lower_Role][0][1] = CENTER_THREE;
+			FlagPos[Lower_Role][1][2] = CENTER_THREE;
+			FlagPos[Lower_Role][2][3] = CENTER_THREE;
+			FlagPos[Lower_Role][1][4] = CENTER_THREE;
 		}
 		if (Board[12][1] == 'f') {
-			FlagPos[Upper_Role][12][1] = 40;
-			FlagPos[Upper_Role][12][0] = 20;
-			FlagPos[Upper_Role][12][2] = 20;
-			FlagPos[Upper_Role][11][1] = 20;
-			FlagPos[Upper_Role][11][0] = 10;
-			FlagPos[Upper_Role][10][1] = 10;
-			FlagPos[Upper_Role][11][2] = 10;
-			FlagPos[Upper_Role][12][3] = 10;
+			FlagPos[Upper_Role][12][1] = CENTER_ONE;
+			FlagPos[Upper_Role][12][0] = CENTER_TWO;
+			FlagPos[Upper_Role][12][2] = CENTER_TWO;
+			FlagPos[Upper_Role][11][1] = CENTER_TWO;
+			FlagPos[Upper_Role][11][0] = CENTER_THREE;
+			FlagPos[Upper_Role][10][1] = CENTER_THREE;
+			FlagPos[Upper_Role][11][2] = CENTER_THREE;
+			FlagPos[Upper_Role][12][3] = CENTER_THREE;
 		}
 		else {
-			FlagPos[Upper_Role][12][3] = 40;
-			FlagPos[Upper_Role][12][2] = 20;
-			FlagPos[Upper_Role][12][4] = 20;
-			FlagPos[Upper_Role][11][3] = 20;
-			FlagPos[Upper_Role][12][1] = 10;
-			FlagPos[Upper_Role][11][2] = 10;
-			FlagPos[Upper_Role][10][3] = 10;
-			FlagPos[Upper_Role][11][4] = 10;
+			FlagPos[Upper_Role][12][3] = CENTER_ONE;
+			FlagPos[Upper_Role][12][2] = CENTER_TWO;
+			FlagPos[Upper_Role][12][4] = CENTER_TWO;
+			FlagPos[Upper_Role][11][3] = CENTER_TWO;
+			FlagPos[Upper_Role][12][1] = CENTER_THREE;
+			FlagPos[Upper_Role][11][2] = CENTER_THREE;
+			FlagPos[Upper_Role][10][3] = CENTER_THREE;
+			FlagPos[Upper_Role][11][4] = CENTER_THREE;
 		}
 	}
 
