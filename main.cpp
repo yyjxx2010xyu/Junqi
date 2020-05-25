@@ -29,6 +29,7 @@ int main(int argc, char* argv[])
 {
 	Connect Con;
 	Con.Init();
+	fflush(stdout);
 
 	//	缺省情况下，执先手
 	//	int State = STATE_LOWER;
@@ -41,18 +42,21 @@ int main(int argc, char* argv[])
 	srand(time(NULL));
 
 	Chess Board;
-	Board.init();
+	bool first = true;
 	while (true)
 	{
 		int Status = Con.Get_Board(Board);
+		if (first) {
+			Board.init();
+			first = false;
+		}
 		if (Status == STATUS_END)
 			break;
 		else if (Status == STATUS_AFTER)
 			continue;
-		Board.Display();
+	//	Board.Display();
 		Movement Move = Junqi.Search(Board);
 		Board = Board.Apply_Move(Move);
-		
 		Con.Send_Move(Move);
 		fflush(stdout);
 
