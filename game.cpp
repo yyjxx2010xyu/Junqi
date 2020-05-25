@@ -2,6 +2,7 @@
 #include <vector>
 #include <cassert>
 #include <ctime>
+#include <cstring>
 #include "game.h"
 #include "connect.h"
 #include "zobrist.h"
@@ -26,8 +27,27 @@ function:
 
 void Game::Arg_Init(int argc, char* argv[])
 {
-	Role = atoi(argv[2]);
-	Time_Limit = atoi(argv[4]);
+	Role = 1;
+	Time_Limit = 60;
+	if (argc == 3)
+	{
+	
+		if (strcmp(argv[1], "--role") == 0)
+			Role = atoi(argv[2]);
+		if (strcmp(argv[1], "--time") == 0)
+			Time_Limit = atoi(argv[2]);
+	}
+	if (argc == 5)
+	{
+		if (strcmp(argv[1], "--role") == 0)
+			Role = atoi(argv[2]);
+		if (strcmp(argv[1], "--time") == 0)
+			Time_Limit = atoi(argv[2]);
+		if (strcmp(argv[3], "--role") == 0)
+			Role = atoi(argv[4]);
+		if (strcmp(argv[3], "--time") == 0)
+			Time_Limit = atoi(argv[4]);
+	}
 }
 
 
