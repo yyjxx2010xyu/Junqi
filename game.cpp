@@ -133,7 +133,7 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 			Cur_Board = Cur_Board.Apply_Move(V);
 			//	Cur_Board.Display();
 
-			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role), Search_Width);
+			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role), Search_Width - SEARCH_DEC);
 			Cur_Board.Set_Piece(V.From.x, V.From.y, From_Piece);
 			Cur_Board.Set_Piece(V.To.x, V.To.y, To_Piece);
 

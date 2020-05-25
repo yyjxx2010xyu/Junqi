@@ -239,7 +239,7 @@ int Chess::Evaluater(const int x, const int y, const char ch)
 	else if (ch == 'j' || ch == 'J')//X7
 		value = 9600;
 	else if (ch == 'a' || ch == 'A')//X8
-		value = 12800;
+		value = 20000;
 	else if (ch == 'f' || ch == 'F')//X8
 		value = 204800;
 	else if (ch == 'z' || ch == 'Z')
