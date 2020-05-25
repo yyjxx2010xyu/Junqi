@@ -17,6 +17,7 @@ STATE_LOWER	当前执子方为下部，期盼数据中的小写部分
 const int STATUS_END = -1;
 const int STATUS_OK = 0;
 
+const int SEARCH_DEC = 4;
 typedef unsigned long long ull;
 
 //	搜索宽度
@@ -90,5 +91,5 @@ public:
 	void Arg_Init(int argc, char* argv[]);
 	Movement Search(Chess Board, int Depth = 4);
 private:
-	Eval_Move _Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_State);
+	Eval_Move _Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_State, int Search_Width);
 };

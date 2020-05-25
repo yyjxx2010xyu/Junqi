@@ -55,7 +55,7 @@ Movement Game::Search(Chess Board, int Depth)
 
 	Chess Cur_Board(Board);
 
-	Eval_Move Ret = _Search(Cur_Board, Depth, alpha, beta, PlayerType::MaximizingPlayer, Role);
+	Eval_Move Ret = _Search(Cur_Board, Depth, alpha, beta, PlayerType::MaximizingPlayer, Role, SEARCH_WIDTH);
 
 	finish_time = (int)time(0);
 	std::cout << "search time:" << finish_time - begin_time << std::endl;
@@ -106,7 +106,7 @@ output:
 function:
 	进行mimmax搜索，并使用alpha-beta剪枝，返回最优的下子路径，和最优的解
 */
-Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_Role)
+Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_Role, int Search_Width)
 {
 
 	finish_time = (int)time(0);
@@ -123,7 +123,7 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 	{
 		int Max_Eval = -INF;
 		Movement Best_Move = Movement(Coord(), Coord());
-		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role, Player);
+		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role, Player, Search_Width);
 
 		for (std::vector<Movement>::iterator iter = Move.begin(); iter != Move.end(); iter++)
 		{
@@ -132,7 +132,7 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 			char To_Piece = Cur_Board.Get_Piece(V.To.x, V.To.y);
 			Cur_Board = Cur_Board.Apply_Move(V);
 
-			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role));
+			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role), Search_Width - SEARCH_DEC);
 			Cur_Board.Set_Piece(V.From.x, V.From.y, From_Piece);
 			Cur_Board.Set_Piece(V.To.x, V.To.y, To_Piece);
 
@@ -168,7 +168,7 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 	{
 		int Min_Eval = INF;
 		Movement Best_Move = Movement(Coord(), Coord());
-		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role, Player);
+		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role, Player, Search_Width);
 
 		for (std::vector<Movement>::iterator iter = Move.begin(); iter != Move.end(); iter++)
 		{
@@ -177,7 +177,7 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 			char To_Piece = Cur_Board.Get_Piece(V.To.x, V.To.y);
 			Cur_Board = Cur_Board.Apply_Move(V);
 
-			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MaximizingPlayer, Oppsite_Role(Cur_Role));
+			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MaximizingPlayer, Oppsite_Role(Cur_Role), Search_Width - SEARCH_DEC);
 			Cur_Board.Set_Piece(V.From.x, V.From.y, From_Piece);
 			Cur_Board.Set_Piece(V.To.x, V.To.y, To_Piece);
 

@@ -496,7 +496,7 @@ static int Selector_Origin(Chess chess, const int& Role, Movement M)
 }
 
 inline int Min(int x, int y) { return x > y ? y : x; }
-std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player)
+std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player, const int Search_Width)
 {
 	Chess T(this->Board);
 
@@ -508,17 +508,17 @@ std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int&
 	for (int i = 0; i < M.size(); i++)
 	{
 		int temp = Selector(T, Role, M[i]);
-		if (!Q.empty() && (temp < Q.top().first && Q.size() == SEARCH_WIDTH))
+		if (!Q.empty() && (temp < Q.top().first && Q.size() == Search_Width))
 			continue;
 
 		Q.push(std::make_pair(temp, M[i]));
-		if (Q.size() == SEARCH_WIDTH + 1)
+		if (Q.size() == Search_Width + 1)
 			Q.pop();
 	}
 	std::vector<Movement> result;
 
 	result.resize(Q.size());
-	for (int i = Min(SEARCH_WIDTH, Q.size()) - 1; i >= 0; i--)
+	for (int i = Min(Search_Width, Q.size()) - 1; i >= 0; i--)
 	{
 		result[i] = Q.top().second;
 		Q.pop();
@@ -602,7 +602,7 @@ bool Cross_Move(std::vector<Movement>& Move, const int cur_x, const int cur_y, c
 	return true;
 }
 
-std::vector<Movement> Chess::Search_Movement(const int& Role, PlayerType Player)
+std::vector<Movement> Chess::Search_Movement(const int& Role, PlayerType Player, const int Search_Width)
 {
 	std::vector<Movement> Move;
 	Move.clear();
@@ -655,7 +655,7 @@ std::vector<Movement> Chess::Search_Movement(const int& Role, PlayerType Player)
 		//	std::cout <<"Move.size:"<< Move.size() << std::endl;
 	}
 	//return Move;
-	return SelectMoveMent(Move, Role, Player);
+	return SelectMoveMent(Move, Role, Player, Search_Width);
 }
 
 

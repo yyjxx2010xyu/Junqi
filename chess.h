@@ -76,7 +76,7 @@ public:
 	bool Is_Over(const int& Role);
 	int Evaluate_Chess(const int& Role);
 	int Evaluater(const int x, const int y, const char ch);
-	std::vector<Movement>  Search_Movement(const int& State, PlayerType Player);
+	std::vector<Movement>  Search_Movement(const int& State, PlayerType Player, const int Search_Width);
 	Chess Apply_Move(const Movement& V);
 	void Display();
 	bool Is_Movable(Movement M);
@@ -84,7 +84,7 @@ public:
 	void BFSSearch(int x, int y, std::vector<Coord>& Pos, const int& Role);
 	char Get_Piece(int x, int y) const;
 	void Set_Piece(int x, int y, char z);
-	std::vector<Movement> SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player);
+	std::vector<Movement> SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player, const int Search_Width);
 	friend static int Selector(Chess& chess, const int& Role, Movement M);
 	friend class Zobrist;
 
@@ -94,7 +94,7 @@ public:
 
 const int frontEndPos = 7;	//	前线位置
 //	返回棋盘相应位置的颜色
-inline int isColor(int linePos,char ch);
+inline int isColor(int linePos, char ch);
 //	画棋盘
 inline void common_draw_background(const Coord sizeofall, bool border, bool solid, bool display, const Coord cursor);
 //	画棋子
