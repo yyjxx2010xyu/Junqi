@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 	Junqi.Arg_Init(argc, argv);
 
 
-	/*
+	
 
 	while (true)
 	{
@@ -46,14 +46,15 @@ int main(int argc, char* argv[])
 		int Status = Con.Get_Board(Board);
 		if (Status == STATUS_END)
 			break;
-		Board.Display();
+		
 		Movement Move = Junqi.Search(Board);
 		Board = Board.Apply_Move(Move);
-		Board.Display();
+		
 		Con.Send_Move(Move);
+		fflush(stdout);
 
 	}
-	*/
+	/*
 	srand(time(NULL));
 	Chess Board;
 
@@ -72,6 +73,6 @@ int main(int argc, char* argv[])
 		Board= Board.Apply_Move(Move);
 		Sleep(2000);
 
-	}
+	}*/
 	return 0;
 }
