@@ -31,16 +31,12 @@ int main(int argc, char* argv[])
 	Con.Init();
 	fflush(stdout);
 
-	//	缺省情况下，执先手
-	//	int State = STATE_LOWER;
-
 	//	设定执子方
 	Game Junqi;
 	Junqi.Arg_Init(argc, argv);
 
 
-	srand(time(NULL));
-
+	/*
 	Chess Board;
 	bool first = true;
 	while (true)
@@ -54,14 +50,12 @@ int main(int argc, char* argv[])
 			break;
 		else if (Status == STATUS_AFTER)
 			continue;
-	//	Board.Display();
-		Movement Move = Junqi.Search(Board);
-		Board = Board.Apply_Move(Move);
+		Movement Move = Junqi.Search(Board, SEARCH_DEPTH);
 		Con.Send_Move(Move);
 		fflush(stdout);
 
-	}
-	/*Chess Board;
+	}*/
+	Chess Board;
 
 	int Status = Con.Get_Board(Board);
 	
@@ -78,6 +72,6 @@ int main(int argc, char* argv[])
 		Board= Board.Apply_Move(Move);
 		Sleep(2000);
 
-	}*/
+	}
 	return 0;
 }

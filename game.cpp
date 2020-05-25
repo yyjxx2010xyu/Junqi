@@ -10,8 +10,7 @@
 #define ENABLE_ALPHABETA
 
 const int ROLE_UPPER = 1;
-const int ROLE_LOWER = 0;
-const int ROLE_BLANK = -1;
+const int ROLE_LOWER = -1;
 
 /*
 input:
@@ -58,7 +57,9 @@ Movement Game::Search(Chess Board, int Depth)
 	Eval_Move Ret = _Search(Cur_Board, Depth, alpha, beta, PlayerType::MaximizingPlayer, Role, SEARCH_WIDTH);
 
 	finish_time = (int)time(0);
-	//	std::cout << "search time:" << finish_time - begin_time << std::endl;
+
+	std::cout << "search time:" << finish_time - begin_time << std::endl;
+	getchar(), getchar();
 	return Ret.second;
 }
 
@@ -78,12 +79,9 @@ function:
 
 static int Oppsite_Role(int Cur_Role)
 {
-	int Opp_Role = 0;
 
-	if (!Cur_Role)
-		Opp_Role = 1;
 
-	return Opp_Role;
+	return (Cur_Role == ROLE_UPPER) ? ROLE_LOWER : ROLE_UPPER;
 }
 
 /*
@@ -107,7 +105,7 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 {
 
 	finish_time = (int)time(0);
-	if (finish_time - begin_time > this->Time_Limit-1)
+	if (finish_time - begin_time > this->Time_Limit - 1)
 		return std::make_pair(-INF + 1, Movement(Coord(), Coord()));
 
 	if (Depth == 0 || Cur_Board.Is_Over(Cur_Role))
@@ -121,7 +119,7 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 		int Max_Eval = -INF;
 		Movement Best_Move = Movement(Coord(), Coord());
 		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role, Player, Search_Width);
-		
+
 		for (std::vector<Movement>::iterator iter = Move.begin(); iter != Move.end(); iter++)
 		{
 			Movement V = *iter;
@@ -138,7 +136,7 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 
 			if (Depth == SEARCH_DEPTH)
 			{
-				//std::cout << "Depth == " << SEARCH_DEPTH << " " << (char)('A' + 12 - V.From.x) << V.From.y << " " << (char)('A' + 12 - V.To.x) << V.To.y << " Eval:" << Eval << " Heur Eval:" << Cur_Board.Evaluate_Chess(Cur_Role) << std::endl;
+				std::cout << "Depth == " << SEARCH_DEPTH << " " << (char)('A' + 12 - V.From.x) << V.From.y << " " << (char)('A' + 12 - V.To.x) << V.To.y << " Eval:" << Eval << " Heur Eval:" << Cur_Board.Evaluate_Chess(Cur_Role) << std::endl;
 				if (To_Piece == 'f' || To_Piece == 'F')
 					return std::make_pair(Max_Eval, V);
 			}
@@ -163,7 +161,7 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 		int Min_Eval = INF;
 		Movement Best_Move = Movement(Coord(), Coord());
 		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role, Player, Search_Width);
-		
+
 		for (std::vector<Movement>::iterator iter = Move.begin(); iter != Move.end(); iter++)
 		{
 			Movement V = *iter;

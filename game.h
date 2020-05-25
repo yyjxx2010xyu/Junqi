@@ -36,7 +36,6 @@ Role	执棋方
 //	const int ROLE_BLANK = -1;
 extern const int ROLE_UPPER;
 extern const int ROLE_LOWER;
-extern const int ROLE_BLANK;
 
 
 //	用于初始化的最大值

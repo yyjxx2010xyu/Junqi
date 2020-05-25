@@ -4,7 +4,7 @@
 #include "game.h"
 
 const int CENTER_ONE = 10;
-const int CENTER_TWO = 5;
+const int CENTER_TWO = 8;
 const int CENTER_THREE = 2;
 void Chess::init()
 {
@@ -553,6 +553,10 @@ void Chess::BFSSearch(int cur_x, int cur_y, std::vector<Coord>& Pos, const int& 
 				if (Has_Chess(Board[next_x][next_y]))
 				{
 					if ((Board[next_x][next_y] == 'D' || Board[next_x][next_y] == 'd') && Is_Role_Chess(Board[next_x][next_y], !Role))
+						Pos.push_back(Coord(next_x, next_y));
+					if ((Board[next_x][next_y] == 'Z' || Board[next_x][next_y] == 'z') && Is_Role_Chess(Board[next_x][next_y], !Role))
+						Pos.push_back(Coord(next_x, next_y));
+					if ((Board[next_x][next_y] == 'G' || Board[next_x][next_y] == 'g') && Is_Role_Chess(Board[next_x][next_y], !Role))
 						Pos.push_back(Coord(next_x, next_y));
 					continue;
 				}
