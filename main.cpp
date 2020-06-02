@@ -61,12 +61,13 @@ int main(int argc, char* argv[])
 	Chess Board;
 
 	int Status = Con.Get_Board(Board);
+	Zobrist Zob;
 	Board.init();
 	while (true)
 	{
 		Board.Display();
 
-		Movement Move = Junqi.Search(Board, SEARCH_DEPTH);
+		Movement Move = Junqi.Search(Board, SEARCH_DEPTH, Zob);
 
 		Board = Board.Apply_Move(Move);
 		Board.Display();
