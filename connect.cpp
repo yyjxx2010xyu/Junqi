@@ -20,6 +20,7 @@ input: 以下三种情况
 (3)	init <当前棋局>
 用于将开局时的棋局传递给后手的引擎，保证开始运算的时间基本一致。
 例如: init dfdvl/vdygp/l1g1t/st1yp/z1s1z/apglj/5/JLGPA/Z1S1Z/PY1TS/T1G1L/PGYDV/LVDFD 0 0
+slow case dfdvl/vdygp/l1g1t/st1yp/zasjz/1pgl1/5/1LGP1/ZJSAZ/PY1TS/T1G1L/PGYDV/LVDFD 0 0
 (5)	end
 棋局结束，引擎退出。
 

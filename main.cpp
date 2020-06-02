@@ -37,6 +37,7 @@ int main(int argc, char* argv[])
 
 
 	
+	/*
 	Chess Board;
 	bool first = true;
 	while (true)
@@ -55,7 +56,8 @@ int main(int argc, char* argv[])
 		fflush(stdout);
 
 	}
-	/*
+	*/
+	
 	Chess Board;
 
 	int Status = Con.Get_Board(Board);
@@ -74,6 +76,6 @@ int main(int argc, char* argv[])
 		Sleep(2000);
 
 	}
-	*/
+	
 	return 0;
 }

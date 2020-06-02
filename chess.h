@@ -61,15 +61,11 @@ public:
 	}
 	Chess(const Chess& board_data)
 	{
-		for (int i = 0; i < Chess_H; i++)
-			for (int j = 0; j < Chess_W; j++)
-				Board[i][j] = board_data.Board[i][j];
+		memcpy(Board, board_data.Board, sizeof(char) * Chess_H * Chess_W);
 	}
 	Chess(const char board_data[][Chess_W])
 	{
-		for (int i = 0; i < Chess_H; i++)
-			for (int j = 0; j < Chess_W; j++)
-				Board[i][j] = board_data[i][j];
+		memcpy(Board, board_data, sizeof(char) * Chess_H * Chess_W);
 	}
 
 	void init();//初始化棋盘位置，确认大小写在棋盘的位置
