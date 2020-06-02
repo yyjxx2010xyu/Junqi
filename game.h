@@ -23,7 +23,7 @@ const int SEARCH_DEC = 4;
 typedef unsigned long long ull;
 
 //	ËÑË÷¿í¶È
-const int SEARCH_WIDTH = 80;
+const int SEARCH_WIDTH = 36;
 //	ËÑË÷Éî¶È
 const int SEARCH_DEPTH = 8;
 /*
