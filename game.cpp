@@ -132,7 +132,7 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 
 	if (Zob.Search_State(Cur_Zob, Depth, Alpha, Beta) != -INF && Depth != SEARCH_DEPTH  && Zob.Same_Role(Cur_Zob, Depth))
 	{
-	//	return std::make_pair(Zob.Search_State(Cur_Zob, Depth, Alpha, Beta), Movement(Coord(), Coord()));
+		//	return std::make_pair(Zob.Search_State(Cur_Zob, Depth, Alpha, Beta), Movement(Coord(), Coord()));
 	}
 
 	if (Depth == 0 || Cur_Board.Is_Over(Cur_Role))
