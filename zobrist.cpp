@@ -27,12 +27,15 @@ Zobrist::Zobrist()
 	memset(Hash_Table, -1, sizeof(Hash_Table[0]) * Table_Size);
 	Hash_Depth = new int[Table_Size];
 	memset(Hash_Depth, -1, sizeof(Hash_Depth[0]) * Table_Size);
+	Hash_Flag = new int[Table_Size];
+	memset(Hash_Flag, -1, sizeof(Hash_Flag[0]) * Table_Size);
 }
 
 Zobrist::~Zobrist()
 {
 	delete[] Hash_Table;
 	delete[] Hash_Depth;
+	delete[] Hash_Flag;
 }
 
 //	表中的一个位置添加一个棋子
@@ -48,22 +51,32 @@ ull Zobrist::Remove_Piece(ull Chess, int x, int y, char Piece) const
 }
 
 //	记录状态的Eval
-void Zobrist::Record_State(ull Zob_Num, int Eval, int Depth) const
+void Zobrist::Record_State(ull Zob_Num, int Eval, int Depth, int Flag) const
 {
-	if (Hash_Depth[Zob_Num % Table_Size] <= Depth)
+	ull Mod = Zob_Num % Table_Size;
+	if (Hash_Depth[Mod] <= Depth)
 	{
-		Hash_Depth[Zob_Num % Table_Size] = Depth;
-		Hash_Table[Zob_Num % Table_Size] = Eval;
+		Hash_Depth[Mod] = Depth;
+		Hash_Table[Mod] = Eval;
+		Hash_Flag[Mod] = Flag;
 	}
 }
 
 //	查询状态的Eval
-int  Zobrist::Search_State(ull Chess, int Depth) const
+int  Zobrist::Search_State(ull Chess, int Depth, int Alpha, int Beta) const
 {
-	if (Hash_Depth[Chess % Table_Size] < Depth)
+	ull Mod = Chess % Table_Size;
+	if (Hash_Depth[Mod] < Depth)
 		return -INF;
-	return Hash_Table[Chess % Table_Size];
+	if (Hash_Flag[Mod] == HASH_EXACT)
+		return Hash_Table[Mod];
+	if (Hash_Flag[Mod] == HASH_ALPHA && Hash_Table[Mod] <= Alpha)
+		return Alpha;
+	if (Hash_Flag[Mod] == HASH_BETA && Hash_Table[Mod] >= Beta)
+		return Beta;
+	return -INF;
 }
+
 
 
 ull Zobrist::Evaluate_Chess(Chess C) const
@@ -100,7 +113,6 @@ ull Zobrist::Apply_Move(const Chess& C, const Movement& V, const ull& Zob) const
 		Ret = Add_Piece(Ret, V.To.x, V.To.y, C.Board[V.From.x][V.From.y]);
 		Ret = Add_Piece(Ret, V.From.x, V.From.y, BLANK);
 	}
-
 	return Ret;
 }
 
@@ -114,6 +126,11 @@ bool Zobrist::Same_Role(ull Chess, int Depth) const
 int Zobrist::Get_Depth(ull Chess) const
 {
 	return Hash_Depth[Chess % Table_Size];
+}
+
+void Zobrist::Clear_Depth() const
+{
+	memset(Hash_Depth, -1, sizeof(Hash_Depth[0]) * Table_Size);
 }
 
 

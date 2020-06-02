@@ -530,6 +530,10 @@ std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int&
 	return result;
 }
 
+static int Oppsite_Role(int Cur_Role)
+{
+	return (Cur_Role == ROLE_UPPER) ? ROLE_LOWER : ROLE_UPPER;
+}
 
 void Chess::BFSSearch(int cur_x, int cur_y, std::vector<Coord>& Pos, const int& Role)
 {
@@ -552,12 +556,15 @@ void Chess::BFSSearch(int cur_x, int cur_y, std::vector<Coord>& Pos, const int& 
 				visit[next_x][next_y] = true;
 				if (Has_Chess(Board[next_x][next_y]))
 				{
-					if ((Board[next_x][next_y] == 'D' || Board[next_x][next_y] == 'd') && Is_Role_Chess(Board[next_x][next_y], !Role))
-						Pos.push_back(Coord(next_x, next_y));
-					if ((Board[next_x][next_y] == 'Z' || Board[next_x][next_y] == 'z') && Is_Role_Chess(Board[next_x][next_y], !Role))
-						Pos.push_back(Coord(next_x, next_y));
-					if ((Board[next_x][next_y] == 'G' || Board[next_x][next_y] == 'g') && Is_Role_Chess(Board[next_x][next_y], !Role))
-						Pos.push_back(Coord(next_x, next_y));
+					if (Is_Role_Chess(Board[next_x][next_y], Oppsite_Role(Role)))
+					{
+						if (Board[next_x][next_y] == 'D' || Board[next_x][next_y] == 'd')
+							Pos.push_back(Coord(next_x, next_y));
+						if (Board[next_x][next_y] == 'Z' || Board[next_x][next_y] == 'z')
+							Pos.push_back(Coord(next_x, next_y));
+						if (Board[next_x][next_y] == 'G' || Board[next_x][next_y] == 'g')
+							Pos.push_back(Coord(next_x, next_y));
+					}
 					continue;
 				}
 				Q.push(std::make_pair(next_x, next_y));

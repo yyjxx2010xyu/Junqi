@@ -53,7 +53,6 @@ class Chess
 {
 private:
 	char Board[Chess_H][Chess_W];
-
 public:
 	Chess()
 	{
