@@ -33,10 +33,26 @@ extern const int ROLE_UPPER;
 //等级判断需要
 const char RANK[] = "AJSVTYLPGF";
 const char BLANK = ' ';
-
+static int Chess_Value['z' + 1] = { 0 };
 #define UNDER -1
 #define ABOVE 1
 #define SAME_RANK 0
+
+const int Value_G = 110;
+const int Value_P = 120;
+const int Value_L = 250;
+const int Value_Y = 520;
+const int Value_T = 1080;
+const int Value_V = 2200;
+const int Value_S = 4500;
+const int Value_J = 9600;
+const int Value_A = 20000;
+const int Value_F = 204800;
+const int Value_Z = 3600;
+const int Value_D = 4000;
+const int Value_B = 0;//BLANK
+
+
 
 
 enum class PlayerType;
@@ -80,6 +96,7 @@ public:
 	void BFSSearch(int x, int y, std::vector<Coord>& Pos, const int& Role);
 	char Get_Piece(int x, int y) const;
 	void Set_Piece(int x, int y, char z);
+	int Evaluater_Origin(const int x, const int y, const char ch);
 	std::vector<Movement> SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player, const int Search_Width);
 	friend static int Selector(Chess& chess, const int& Role, Movement M);
 	friend class Zobrist;

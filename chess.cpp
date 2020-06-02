@@ -100,6 +100,32 @@ void Chess::init()
 			FlagPos[Upper_Role][11][4] = CENTER_THREE;
 		}
 	}
+	Chess_Value['g'] = Value_G;
+	Chess_Value['G'] = Value_G;
+	Chess_Value['p'] = Value_P;
+	Chess_Value['P'] = Value_P;
+	Chess_Value['l'] = Value_L;
+	Chess_Value['L'] = Value_L;
+	Chess_Value['y'] = Value_Y;
+	Chess_Value['Y'] = Value_Y;
+	Chess_Value['t'] = Value_T;
+	Chess_Value['T'] = Value_T;
+	Chess_Value['v'] = Value_V;
+	Chess_Value['V'] = Value_V;
+	Chess_Value['s'] = Value_S;
+	Chess_Value['S'] = Value_S;
+	Chess_Value['j'] = Value_J;
+	Chess_Value['J'] = Value_J;
+	Chess_Value['a'] = Value_A;
+	Chess_Value['A'] = Value_A;
+	Chess_Value['f'] = Value_F;
+	Chess_Value['F'] = Value_F;
+	Chess_Value['z'] = Value_Z;
+	Chess_Value['Z'] = Value_Z;
+	Chess_Value['d'] = Value_D;
+	Chess_Value['D'] = Value_D;
+	Chess_Value[' '] = Value_B;
+	Chess_Value[' '] = Value_B;
 
 }
 
@@ -218,10 +244,28 @@ function:
 */
 //const char RANK[] = "AJSVTYLPGF";
 
-
-
 int Chess::Evaluater(const int x, const int y, const char ch)
 {
+	int value = Chess_Value[ch];
+	int temp;
+	int killFlag;
+	//增加对方棋盘权重
+	if (ch >= 'A' && ch <= 'Z') {
+		temp = Chess_board[Upper_Role][x];
+		killFlag = FlagPos[Upper_Role][x][y];
+	}
+	else {
+		temp = Chess_board[Lower_Role][x];
+		killFlag = FlagPos[Lower_Role][x][y];
+	}
+	//加入行营所占的权重，希望尽可能占领多的行营
+	return (int)((double)(1.0 + 0.008 * (double)Station[x][y] + 0.0025 * (double)Railway[x][y] + 0.006 * (double)temp + 0.04 * (double)killFlag) * (double)value);
+	
+}
+
+int Chess::Evaluater_Origin(const int x, const int y, const char ch)
+{
+	//之前的估值函数
 	int value = 0;
 	//正常等级
 	if (ch == 'g' || ch == 'G')
@@ -265,6 +309,7 @@ int Chess::Evaluater(const int x, const int y, const char ch)
 
 	//加入行营所占的权重，希望尽可能占领多的行营
 	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.003 * (double)Railway[x][y] + 0.008 * (double)temp + 0.05 * (double)killFlag) * (double)value);
+//	return (1000 + 1 * Station[x][y] + 3 * Railway[x][y] + 8 * temp + 5 * killFlag) * value;
 
 	//	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.001 * (double)Railway[x][y]+0.003*(double)temp+0.05*(double)killFlag) * (double)value);
 }
@@ -322,7 +367,6 @@ Chess Chess::Apply_Move(const Movement& V)
 
 	return Next_Board;
 }
-
 
 /*
 function:

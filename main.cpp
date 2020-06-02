@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 	Chess Board;
 
 	int Status = Con.Get_Board(Board);
-	
+	Board.init();
 	while (true)
 	{
 		Board.Display();
