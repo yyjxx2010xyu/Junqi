@@ -22,7 +22,7 @@ const int STATUS_AFTER = 1;
 const int SEARCH_DEC = 4;
 typedef unsigned long long ull;
 
-const int WIDTH_TABLE[9] = { 0,10,10,20,20,30,30,50,50 };
+const int WIDTH_TABLE[9] = { 0,10,10,20,20,30,30,40,40 };
 //	ËÑË÷¿í¶È
 const int SEARCH_WIDTH = 50;
 //	ËÑË÷Éî¶È
@@ -93,5 +93,5 @@ public:
 	void Arg_Init(int argc, char* argv[]);
 	Movement Search(Chess Board, int Depth);
 private:
-	Eval_Move _Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_State, int Search_Width);
+	Eval_Move _Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_State, int Cur_Eval);
 };

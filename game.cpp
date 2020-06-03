@@ -73,8 +73,9 @@ Movement Game::Search(Chess Board, int Depth)
 	begin_time = (int)time(0);
 
 	Chess Cur_Board(Board);
+	int Cur_Eval = Cur_Board.Evaluate_Chess(this->Role);
 
-	Eval_Move Ret = _Search(Cur_Board, Depth, alpha, beta, PlayerType::MaximizingPlayer, Role, SEARCH_WIDTH);
+	Eval_Move Ret = _Search(Cur_Board, Depth, alpha, beta, PlayerType::MaximizingPlayer, Role, Cur_Eval);
 
 	finish_time = (int)time(0);
 
@@ -122,7 +123,7 @@ output:
 function:
 	进行mimmax搜索，并使用alpha-beta剪枝，返回最优的下子路径，和最优的解
 */
-Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_Role, int Search_Width)
+Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_Role, int Cur_Eval)
 {
 
 	finish_time = (int)time(0);
@@ -132,7 +133,7 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 	if (Depth == 0 || Cur_Board.Is_Over(Cur_Role))
 	{
 		//	Eval函数始终返回的机器执子方的最优解
-		return std::make_pair(Cur_Board.Evaluate_Chess(Cur_Role), Movement(Coord(), Coord()));
+		return std::make_pair(Cur_Eval, Movement(Coord(), Coord()));
 	}
 
 	if (Player == PlayerType::MaximizingPlayer)
@@ -140,24 +141,22 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 		int Max_Eval = -INF;
 		ull Max_Zob = 0;
 		Movement Best_Move = Movement(Coord(), Coord());
-		//std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role, Player, Search_Width);
-		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role, Player, WIDTH_TABLE[Depth]);
+		std::vector<Eval_Move> Move = Cur_Board.Search_Movement(Cur_Role, Player, WIDTH_TABLE[Depth]);
 
-		for (std::vector<Movement>::iterator iter = Move.begin(); iter != Move.end(); iter++)
+		for (std::vector<Eval_Move>::iterator iter = Move.begin(); iter != Move.end(); iter++)
 		{
-			Movement V = *iter;
+			Movement V = (*iter).second;
 
 			char From_Piece = Cur_Board.Get_Piece(V.From.x, V.From.y);
 			char To_Piece = Cur_Board.Get_Piece(V.To.x, V.To.y);
 			Cur_Board = Cur_Board.Apply_Move(V);
-			//	Cur_Board.Display();
-			//	assert(Zob.Evaluate_Chess(Cur_Board) == Next_Zob);
-			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role), Search_Width - SEARCH_DEC, Zob, Next_Zob);
+
+			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role), -(Cur_Eval + (*iter).first));
 			Cur_Board.Set_Piece(V.From.x, V.From.y, From_Piece);
 			Cur_Board.Set_Piece(V.To.x, V.To.y, To_Piece);
 
 			int Eval = Ret.first;
-			
+
 			if (Depth == SEARCH_DEPTH)
 			{
 				std::cout << "Depth == " << SEARCH_DEPTH << " " << (char)('A' + 12 - V.From.x) << V.From.y << " " << (char)('A' + 12 - V.To.x) << V.To.y << " Eval:" << Eval << " Heur Eval:" << Cur_Board.Evaluate_Chess(Cur_Role) << std::endl;
@@ -184,16 +183,15 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 	{
 		int Min_Eval = INF;
 		Movement Best_Move = Movement(Coord(), Coord());
-	//	std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role, Player, Search_Width);
-		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role, Player, WIDTH_TABLE[Depth]);
-		for (std::vector<Movement>::iterator iter = Move.begin(); iter != Move.end(); iter++)
+		std::vector<Eval_Move> Move = Cur_Board.Search_Movement(Cur_Role, Player, WIDTH_TABLE[Depth]);
+		for (std::vector<Eval_Move>::iterator iter = Move.begin(); iter != Move.end(); iter++)
 		{
-			Movement V = *iter;
+			Movement V = (*iter).second;
 			char From_Piece = Cur_Board.Get_Piece(V.From.x, V.From.y);
 			char To_Piece = Cur_Board.Get_Piece(V.To.x, V.To.y);
 			Cur_Board = Cur_Board.Apply_Move(V);
-			//	Cur_Board.Display();
-			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MaximizingPlayer, Oppsite_Role(Cur_Role), Search_Width - SEARCH_DEC, Zob, Next_Zob);
+
+			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MaximizingPlayer, Oppsite_Role(Cur_Role), -(Cur_Eval + (*iter).first));
 
 			Cur_Board.Set_Piece(V.From.x, V.From.y, From_Piece);
 			Cur_Board.Set_Piece(V.To.x, V.To.y, To_Piece);

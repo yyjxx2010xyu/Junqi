@@ -262,7 +262,7 @@ int Chess::Evaluater(const int x, const int y, const char ch)
 	}
 	//加入行营所占的权重，希望尽可能占领多的行营
 	return (int)((double)(1.0 + 0.008 * (double)Station[x][y] + 0.0025 * (double)Railway[x][y] + 0.006 * (double)temp + 0.04 * (double)killFlag) * (double)value);
-	
+
 }
 
 int Chess::Evaluater_Origin(const int x, const int y, const char ch)
@@ -311,9 +311,9 @@ int Chess::Evaluater_Origin(const int x, const int y, const char ch)
 
 	//加入行营所占的权重，希望尽可能占领多的行营
 	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.003 * (double)Railway[x][y] + 0.008 * (double)temp + 0.05 * (double)killFlag) * (double)value);
-//	return (1000 + 1 * Station[x][y] + 3 * Railway[x][y] + 8 * temp + 5 * killFlag) * value;
+	//	return (1000 + 1 * Station[x][y] + 3 * Railway[x][y] + 8 * temp + 5 * killFlag) * value;
 
-	//	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.001 * (double)Railway[x][y]+0.003*(double)temp+0.05*(double)killFlag) * (double)value);
+		//	return (int)((double)(1.0 + 0.01 * (double)Station[x][y] + 0.001 * (double)Railway[x][y]+0.003*(double)temp+0.05*(double)killFlag) * (double)value);
 }
 
 int Chess::Evaluate_Chess(const int& Role)
@@ -539,7 +539,7 @@ static int Selector_Origin(Chess chess, const int& Role, Movement M)
 }
 
 inline int Min(int x, int y) { return x > y ? y : x; }
-std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player, const int Search_Width)
+std::vector<Eval_Move> Chess::SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player, const int Search_Width)
 {
 	Chess T(this->Board);
 
@@ -558,12 +558,12 @@ std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int&
 		if (Q.size() == Search_Width + 1)
 			Q.pop();
 	}
-	std::vector<Movement> result;
+	std::vector<Eval_Move> result;
 
 	result.resize(Q.size());
 	for (int i = Min(Search_Width, Q.size()) - 1; i >= 0; i--)
 	{
-		result[i] = Q.top().second;
+		result[i] = std::make_pair(Q.top().first, Q.top().second);
 		Q.pop();
 	}
 
@@ -656,7 +656,7 @@ bool Cross_Move(std::vector<Movement>& Move, const int cur_x, const int cur_y, c
 	return true;
 }
 
-std::vector<Movement> Chess::Search_Movement(const int& Role, PlayerType Player, const int Search_Width)
+std::vector<Eval_Move> Chess::Search_Movement(const int& Role, PlayerType Player, const int Search_Width)
 {
 	std::vector<Movement> Move;
 	Move.clear();

@@ -7,6 +7,8 @@
 #include "game.h"
 #include "connect.h"
 #include "cmd_console_tools.h"
+
+
 //用于棋盘权重，执棋方在棋盘上方为UP，在下方为DOWN
 #define UP 0
 #define DOWN 1
@@ -52,7 +54,7 @@ const int Value_Z = 3600;
 const int Value_D = 4000;
 const int Value_B = 0;//BLANK
 
-
+typedef std::pair<int, Movement> Eval_Move;
 
 
 enum class PlayerType;
@@ -87,7 +89,7 @@ public:
 	bool Is_Over(const int& Role);
 	int Evaluate_Chess(const int& Role);
 	int Evaluater(const int x, const int y, const char ch);
-	std::vector<Movement>  Search_Movement(const int& State, PlayerType Player, const int Search_Width);
+	std::vector<Eval_Move>  Search_Movement(const int& State, PlayerType Player, const int Search_Width);
 	Chess Apply_Move(const Movement& V);
 	void Display();
 	bool Is_Movable(Movement M);
@@ -96,7 +98,7 @@ public:
 	char Get_Piece(int x, int y) const;
 	void Set_Piece(int x, int y, char z);
 	int Evaluater_Origin(const int x, const int y, const char ch);
-	std::vector<Movement> SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player, const int Search_Width);
+	std::vector<Eval_Move> SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player, const int Search_Width);
 	friend static int Selector(Chess& chess, const int& Role, Movement M);
 	friend class Zobrist;
 
