@@ -2,6 +2,7 @@
 #include <iostream>
 #include "chess.h"
 #include "game.h"
+#include "time.h"
 
 typedef unsigned long long ull;
 
