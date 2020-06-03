@@ -64,7 +64,7 @@ function:
 
 static int begin_time;
 static int finish_time;
-Movement Game::Search(Chess Board, int Depth, Zobrist& Zob)
+Movement Game::Search(Chess Board, int Depth)
 {
 
 	int alpha = -INF;
@@ -73,9 +73,8 @@ Movement Game::Search(Chess Board, int Depth, Zobrist& Zob)
 	begin_time = (int)time(0);
 
 	Chess Cur_Board(Board);
-	ull Cur_Zob = Zob.Evaluate_Chess(Cur_Board);
-	Zob.Clear_Depth();
-	Eval_Move Ret = _Search(Cur_Board, Depth, alpha, beta, PlayerType::MaximizingPlayer, Role, SEARCH_WIDTH, Zob, Cur_Zob);
+
+	Eval_Move Ret = _Search(Cur_Board, Depth, alpha, beta, PlayerType::MaximizingPlayer, Role, SEARCH_WIDTH);
 
 	finish_time = (int)time(0);
 
@@ -123,17 +122,12 @@ output:
 function:
 	进行mimmax搜索，并使用alpha-beta剪枝，返回最优的下子路径，和最优的解
 */
-Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_Role, int Search_Width, Zobrist& Zob, ull Cur_Zob)
+Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_Role, int Search_Width)
 {
 
 	finish_time = (int)time(0);
 	//if (finish_time - begin_time > this->Time_Limit - 1)
 	//	return std::make_pair(-INF + 1, Movement(Coord(), Coord()));
-
-	if (Zob.Search_State(Cur_Zob, Depth, Alpha, Beta) != -INF && Depth != SEARCH_DEPTH  && Zob.Same_Role(Cur_Zob, Depth))
-	{
-		return std::make_pair(Zob.Search_State(Cur_Zob, Depth, Alpha, Beta), Movement(Coord(), Coord()));
-	}
 
 	if (Depth == 0 || Cur_Board.Is_Over(Cur_Role))
 	{
@@ -143,7 +137,6 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 
 	if (Player == PlayerType::MaximizingPlayer)
 	{
-		int Hash_Flag = HASH_ALPHA;
 		int Max_Eval = -INF;
 		ull Max_Zob = 0;
 		Movement Best_Move = Movement(Coord(), Coord());
@@ -153,14 +146,12 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 		{
 			Movement V = *iter;
 
-			ull Next_Zob = Zob.Apply_Move(Cur_Board, V, Cur_Zob);
-
 			char From_Piece = Cur_Board.Get_Piece(V.From.x, V.From.y);
 			char To_Piece = Cur_Board.Get_Piece(V.To.x, V.To.y);
 			Cur_Board = Cur_Board.Apply_Move(V);
 			//	Cur_Board.Display();
-			//	assert(Zob.Evaluate_Chess(Cur_Board) == Next_Zob);
-			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role), Search_Width - SEARCH_DEC, Zob, Next_Zob);
+
+			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MinimizingPlayer, Oppsite_Role(Cur_Role), Search_Width - SEARCH_DEC);
 			Cur_Board.Set_Piece(V.From.x, V.From.y, From_Piece);
 			Cur_Board.Set_Piece(V.To.x, V.To.y, To_Piece);
 
@@ -176,31 +167,20 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 			if (Eval > Max_Eval)
 			{
 				Max_Eval = Eval;
-				Max_Zob = Next_Zob;
 				Best_Move = V;
 
 				if (Eval > Alpha)
-				{
-					Hash_Flag = HASH_EXACT;
 					Alpha = Eval;
-				}
 				if (Beta <= Alpha)
-				{
-					Zob.Record_State(Next_Zob, Beta, Depth - 1, HASH_BETA);
 					return std::make_pair(Beta, Best_Move);
-				}
 			}
-
-			Zob.Record_State(Next_Zob, Eval, Depth - 1, Hash_Flag);
 		}
-		//	Zob.Record_State(Max_Zob, Max_Eval, Depth, HASH_EXACT);
 		return std::make_pair(Max_Eval, Best_Move);
 	}
 
 	//	极小化当前Eval的Player
 	if (Player == PlayerType::MinimizingPlayer)
 	{
-		int Hash_Flag = HASH_BETA;
 		int Min_Eval = INF;
 		Movement Best_Move = Movement(Coord(), Coord());
 		std::vector<Movement> Move = Cur_Board.Search_Movement(Cur_Role, Player, Search_Width);
@@ -208,12 +188,11 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 		for (std::vector<Movement>::iterator iter = Move.begin(); iter != Move.end(); iter++)
 		{
 			Movement V = *iter;
-			ull Next_Zob = Zob.Apply_Move(Cur_Board, V, Cur_Zob);
 			char From_Piece = Cur_Board.Get_Piece(V.From.x, V.From.y);
 			char To_Piece = Cur_Board.Get_Piece(V.To.x, V.To.y);
 			Cur_Board = Cur_Board.Apply_Move(V);
 			//	Cur_Board.Display();
-			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MaximizingPlayer, Oppsite_Role(Cur_Role), Search_Width - SEARCH_DEC, Zob, Next_Zob);
+			Eval_Move Ret = _Search(Cur_Board, Depth - 1, Alpha, Beta, PlayerType::MaximizingPlayer, Oppsite_Role(Cur_Role), Search_Width - SEARCH_DEC);
 
 			Cur_Board.Set_Piece(V.From.x, V.From.y, From_Piece);
 			Cur_Board.Set_Piece(V.To.x, V.To.y, To_Piece);
@@ -226,19 +205,11 @@ Eval_Move Game::_Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, Player
 				Min_Eval = Eval;
 				Best_Move = V;
 				if (Eval < Beta)
-				{
-					Hash_Flag = HASH_EXACT;
 					Beta = Eval;
-				}
 				if (Beta <= Alpha)
-				{
-					//Zob.Record_State(Next_Zob, Beta, Depth - 1, HASH_ALPHA);
 					return std::make_pair(Alpha, Best_Move);
-				}
 			}
-			//	Zob.Record_State(Next_Zob, Eval, Depth - 1, Hash_Flag);
 		}
-
 		return std::make_pair(Min_Eval, Best_Move);
 	}
 

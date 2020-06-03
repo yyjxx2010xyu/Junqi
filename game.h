@@ -90,7 +90,7 @@ protected:
 	int Time_Limit;
 public:
 	void Arg_Init(int argc, char* argv[]);
-	Movement Search(Chess Board, int Depth, Zobrist& Zob);
+	Movement Search(Chess Board, int Depth);
 private:
-	Eval_Move _Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_State, int Search_Width, Zobrist& Zob, ull Cur_Zob);
+	Eval_Move _Search(Chess& Cur_Board, int Depth, int Alpha, int Beta, PlayerType Player, int Cur_State, int Search_Width);
 };

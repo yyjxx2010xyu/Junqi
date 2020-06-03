@@ -6,6 +6,8 @@
 const int CENTER_ONE = 10;
 const int CENTER_TWO = 8;
 const int CENTER_THREE = 2;
+
+
 void Chess::init()
 {
 	if (Board[0][1] == 'f' || Board[0][3] == 'f') {
@@ -346,12 +348,7 @@ function:
 
 Chess Chess::Apply_Move(const Movement& V)
 {
-	Chess Next_Board;
-	for (int i = 0; i < Chess_H; i++) {
-		for (int j = 0; j < Chess_W; j++) {
-			Next_Board.Board[i][j] = Board[i][j];
-		}
-	}
+	Chess Next_Board(this->Board);
 	int result = Rank_Judgement(Next_Board.Board[V.To.x][V.To.y], Next_Board.Board[V.From.x][V.From.y]);
 	if (result == SAME_RANK) {
 		Next_Board.Board[V.To.x][V.To.y] = BLANK;
@@ -433,7 +430,7 @@ static bool Is_Station(int x, int y)
 //	ÓÐÆå×Ó
 static bool Has_Chess(char ch)
 {
-	return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
+	return ch != BLANK;
 }
 
 static bool Special_move(int x, int y, int cur_x, int cur_y)
@@ -545,7 +542,6 @@ inline int Min(int x, int y) { return x > y ? y : x; }
 std::vector<Movement> Chess::SelectMoveMent(std::vector <Movement> M, const int& Role, PlayerType Player, const int Search_Width)
 {
 	Chess T(this->Board);
-
 
 	typedef std::pair<int, Movement> move_pair;
 	auto comp = [](const move_pair& a, const move_pair& b) {return a.first > b.first; };

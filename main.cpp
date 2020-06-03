@@ -5,7 +5,7 @@
 #include "chess.h"
 #include "zobrist.h"
 #include <ctime>
-#include <windows.h>
+#include <windows.h> 
 
 #ifdef DEBUG
 #include <time.h>
@@ -59,16 +59,14 @@ int main(int argc, char* argv[])
 	*/
 	
 	Chess Board;
-	srand(time(0));
+
 	int Status = Con.Get_Board(Board);
-	Zobrist Zob;
 	Board.init();
+
 	while (true)
 	{
 		Board.Display();
-
-		Movement Move = Junqi.Search(Board, SEARCH_DEPTH, Zob);
-
+		Movement Move = Junqi.Search(Board, SEARCH_DEPTH);
 		Board = Board.Apply_Move(Move);
 		Board.Display();
 		Con.Send_Move(Move);

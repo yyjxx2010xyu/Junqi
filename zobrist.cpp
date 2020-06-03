@@ -29,6 +29,13 @@ Zobrist::Zobrist()
 	memset(Hash_Depth, -1, sizeof(Hash_Depth[0]) * Table_Size);
 	Hash_Flag = new int[Table_Size];
 	memset(Hash_Flag, -1, sizeof(Hash_Flag[0]) * Table_Size);
+
+	for (int i = 0; i < Chess_H; i++)
+		for (int j = 0; j < Chess_W; j++)
+			for (int k = 0; k < Chess_Type * 2 + 1; k++)
+				Verified_Table[i][j][k] = Rand_ULL();
+	Hash_Verified = new int[Table_Size];
+	memset(Hash_Verified, -1, sizeof(Hash_Verified[0]) * Table_Size);
 }
 
 Zobrist::~Zobrist()
@@ -131,6 +138,39 @@ int Zobrist::Get_Depth(ull Chess) const
 void Zobrist::Clear_Depth() const
 {
 	memset(Hash_Depth, -1, sizeof(Hash_Depth[0]) * Table_Size);
+}
+
+static int R[13][5];
+static int cnt = 0;
+void Zobrist::_Check(int Depth) const
+{
+	if (Depth == 65)
+	{
+		ull Ret = 0;
+		for (int i = 0; i < Chess_H; i++)
+			for (int j = 0; j < Chess_W; j++)
+				Ret = Ret ^ Zobrist_Table[i][j][R[i][j]];
+		
+		cnt++;
+		if (cnt % 1000 == 0)
+		{
+			std::cout << cnt << " " <<  Ret << std::endl;
+			fflush(stdout);
+		}
+		assert(Hash_Depth[Ret % Table_Size] == -1);
+		Hash_Depth[Ret % Table_Size] = 0;
+		return;
+	}
+	for (int i = 0; i < 25; i++)
+	{
+		R[Depth / 5][Depth % 5] = i;
+		_Check(Depth + 1);
+	}
+}
+void Zobrist::Check() const
+{
+	memset(Hash_Depth, -1, sizeof(Hash_Depth[0]) * Table_Size);
+	_Check(0);
 }
 
 

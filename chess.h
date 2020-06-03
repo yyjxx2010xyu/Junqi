@@ -72,7 +72,7 @@ private:
 public:
 	Chess()
 	{
-
+		memset(Board, 0, sizeof(char) * Chess_H * Chess_W);
 	}
 	Chess(const Chess& board_data)
 	{
