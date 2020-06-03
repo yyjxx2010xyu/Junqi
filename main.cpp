@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 	*/
 	
 	Chess Board;
-
+	srand(time(0));
 	int Status = Con.Get_Board(Board);
 	Zobrist Zob;
 	Board.init();
