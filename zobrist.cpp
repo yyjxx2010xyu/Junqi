@@ -19,6 +19,7 @@ static ull Rand_ULL()
 //	生成函数	初始化每个位置的不同棋子的权重，初始化Hash表
 Zobrist::Zobrist()
 {
+	srand(time(0));
 	for (int i = 0; i < Chess_H; i++)
 		for (int j = 0; j < Chess_W; j++)
 			for (int k = 0; k < Chess_Type * 2 + 1; k++)
