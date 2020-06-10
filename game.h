@@ -22,7 +22,7 @@ const int STATUS_AFTER = 1;
 const int SEARCH_DEC = 4;
 typedef unsigned long long ull;
 
-const int WIDTH_TABLE[9] = { 0,10,10,20,20,30,30,40,40 };
+const int WIDTH_TABLE[9] = { 0,10,10,20,20,35,35,45,45 };
 //	ËÑË÷¿í¶È
 const int SEARCH_WIDTH = 50;
 //	ËÑË÷Éî¶È
